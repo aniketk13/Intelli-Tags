@@ -12,9 +12,6 @@ import com.example.intelli_tags.ui.main.SectionsPagerAdapter
 import com.example.intelli_tags.databinding.ActivityMainBinding
 import android.R
 
-
-
-
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
