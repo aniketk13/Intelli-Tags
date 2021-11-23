@@ -72,5 +72,12 @@ dependencies {
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
     implementation 'com.amplifyframework:aws-storage-s3:1.29.1'
     implementation 'com.amplifyframework:aws-auth-cognito:1.29.1'
+    //noinspection GradleCompatible
+    implementation 'com.android.support:support-compat:28.0.0'
+    //noinspection GradleCompatible
+    implementation 'com.android.support:support-media-compat:28.0.0'
+    implementation 'com.amazonaws:aws-android-sdk-appsync:2.6.+'
+    implementation 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.0'
+    implementation 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.1'
 
 }
