@@ -118,16 +118,15 @@ class SecondFragment : Fragment() {
 
                 val properInput = JSONObject()
 
-                val tempo = JSONObject()
-                tempo.put("type", "aws-s3")
-                tempo.put("accessKeyID", "AKIATLNIEWDMNMKGF4EF")
-                tempo.put("secretAccessKey", "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")
-                tempo.put("region", "aws-s3")
-                tempo.put("type", "us-east-2")
+//                val tempo = JSONObject()
+                properInput.put("type", "aws-s3")
+                properInput.put("accessKeyID", "AKIATLNIEWDMNMKGF4EF")
+                properInput.put("secretAccessKey", "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")
+                properInput.put("region", "us-east-2")
                 properInput.put("sources", sourcesWaliBaat)
 
                 finalBody.put("input", properInput)
-
+                Log.i("body",finalBody.toString())
 
 
 
