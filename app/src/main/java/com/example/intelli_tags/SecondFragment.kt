@@ -10,17 +10,23 @@ import android.view.ViewGroup
 import kotlinx.android.synthetic.main.fragment_second.view.*
 import java.io.File
 import android.app.Activity.RESULT_OK
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.net.Uri
 import android.os.Handler
 import android.provider.MediaStore
+import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import com.amplifyframework.AmplifyException
 import com.amplifyframework.auth.cognito.AWSCognitoAuthPlugin
 import com.amplifyframework.core.Amplify
 import com.amplifyframework.storage.s3.AWSS3StoragePlugin
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
+import kotlinx.android.synthetic.main.fragment_first.view.*
 import org.json.JSONObject
+import java.lang.StringBuilder
 
 
 /**
@@ -173,7 +179,7 @@ class SecondFragment : Fragment() {
                 Log.i("inside", "Inside Api Call")
                 val outputText = (it.getJSONObject("results")).getJSONObject("0001")
                     .getJSONObject("results.json").getString("text")
-
+                processText(outputText)
                 Log.i("Text", outputText.toString())
                 Toast.makeText(requireContext(), "Api Call success", Toast.LENGTH_SHORT).show()
 
@@ -193,5 +199,105 @@ class SecondFragment : Fragment() {
         }
         queue2.add(req)
 
+    }
+    private fun processText(text: String) {
+
+//        val text =
+//            "API is the acronym for Application Programming Interface, which is a software intermediary that allows two applications to talk to each other. Each time you use an app like Facebook, send an instant message, or check the weather on your phone, you're using an API."
+        val url = "https://app.modzy.com/api/jobs"
+        val body = JSONObject()
+        val body2 = JSONObject()
+        body2.put("identifier", "m8z2mwe3pt")
+        body2.put("version", "0.0.1")
+        body.put("model", body2)
+        val body4 = JSONObject()
+        body4.put("input.txt", text)
+        val body3 = JSONObject()
+        body3.put("my-input", body4)
+        val body5 = JSONObject()
+        body5.put("type", "text")
+        body5.put("sources", body3)
+
+        //final body
+        body.put("input", body5)
+
+        Log.i("body", body.toString())
+
+//
+        val queue = Volley.newRequestQueue(viewOfLayout2nd.context)
+        var response = ""
+        val req = object : JsonObjectRequest(
+            Method.POST, url, body,
+            {
+                Log.i("inside", "Inside Api Call")
+
+                response = it.getString("jobIdentifier")
+                Handler().postDelayed({ getTopics(response) }, 3000)
+                Log.i("identifier", response)
+                Toast.makeText(requireContext(), "Api Call success", Toast.LENGTH_SHORT).show()
+
+            }, {
+                Toast.makeText(requireContext(), "Api Call Failed", Toast.LENGTH_SHORT).show()
+                Log.i("status code", it.message.toString())
+            }) {
+            override fun getHeaders(): MutableMap<String, String> {
+                val headerMap = mutableMapOf<String, String>()
+                headerMap["Authorization"] = "ApiKey KSQslWseSzQ3hfcWeC0A.lMIZQC7rTsApVTnDeArW"
+                headerMap["Content-Type"] = "application/json"
+                headerMap["Accept"] = "application/json"
+                headerMap["User-Agent"] = "PostmanRuntime/7.28.4"
+                return headerMap
+            }
+        }
+        queue.add(req)
+    }
+    fun getTopics(response: String) {
+        Log.i("status", response)
+
+        val queue2 = Volley.newRequestQueue(viewOfLayout2nd.context)
+        val req = object : JsonObjectRequest(
+            Method.GET, "https://app.modzy.com/api/results/$response", null,
+            {
+                Log.i("inside", "Inside Api Call")
+                val topics = (it.getJSONObject("results")).getJSONObject("my-input")
+                    .getJSONArray("results.json")
+                Log.i("topics", topics.toString())
+                var output = StringBuilder()
+                for (i in 0 until topics.length())
+                    output.append("#").append(topics[i]).append("\n")
+                Log.i("topics", output.toString())
+                viewOfLayout2nd.findViewById<TextView>(R.id.textView).text = output
+                viewOfLayout2nd.button3.setOnClickListener {
+                    copy_to_clipboard(output.toString())
+                }
+//                copy_to_clipboard(output.toString())
+                Toast.makeText(requireContext(), "Api Call success", Toast.LENGTH_SHORT).show()
+
+            }, {
+                Toast.makeText(requireContext(), "Api Call Failed second", Toast.LENGTH_SHORT)
+                    .show()
+                Log.i("status code", it.message.toString())
+            }) {
+            override fun getHeaders(): MutableMap<String, String> {
+                val headerMap = mutableMapOf<String, String>()
+                headerMap["Authorization"] = "ApiKey KSQslWseSzQ3hfcWeC0A.lMIZQC7rTsApVTnDeArW"
+                headerMap["Content-Type"] = "application/json"
+                headerMap["Accept"] = "application/json"
+                headerMap["User-Agent"] = "PostmanRuntime/7.28.4"
+                return headerMap
+            }
+        }
+        queue2.add(req)
+    }
+    private fun copy_to_clipboard(topics: String) {
+        val textToCopy = topics
+
+        val clipboard =
+            ContextCompat.getSystemService(
+                requireContext(),
+                ClipboardManager::class.java
+            ) as ClipboardManager
+        val clip = ClipData.newPlainText("label", textToCopy)
+        clipboard!!.setPrimaryClip(clip)
     }
 }

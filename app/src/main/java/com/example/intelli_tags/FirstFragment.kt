@@ -28,6 +28,7 @@ import java.lang.reflect.Method
 import android.R.attr.label
 
 import android.content.ClipData
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
 
 import androidx.core.content.ContextCompat.getSystemService
@@ -35,7 +36,7 @@ import androidx.core.content.ContextCompat.getSystemService
 
 class FirstFragment : Fragment(R.layout.fragment_first) {
 
-    private lateinit var viewOfLayout: View
+    lateinit var viewOfLayout: View
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -62,8 +63,7 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
         val clip = ClipData.newPlainText("label", textToCopy)
         clipboard!!.setPrimaryClip(clip)
     }
-
-    private fun processText(text: String) {
+    fun processText(text: String) {
 
 //        val text =
 //            "API is the acronym for Application Programming Interface, which is a software intermediary that allows two applications to talk to each other. Each time you use an app like Facebook, send an instant message, or check the weather on your phone, you're using an API."
@@ -115,8 +115,8 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
         queue.add(req)
     }
 
-    private fun getTopics(response: String) {
-        Log.i("status", response.toString())
+     fun getTopics(response: String) {
+        Log.i("status", response)
 
         val queue2 = Volley.newRequestQueue(viewOfLayout.context)
         val req = object : JsonObjectRequest(
