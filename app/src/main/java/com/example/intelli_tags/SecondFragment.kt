@@ -11,11 +11,15 @@ import kotlinx.android.synthetic.main.fragment_second.view.*
 import java.io.File
 import android.app.Activity.RESULT_OK
 import android.net.Uri
+import android.os.Handler
 import android.provider.MediaStore
+import android.widget.Toast
 import com.amplifyframework.AmplifyException
 import com.amplifyframework.auth.cognito.AWSCognitoAuthPlugin
 import com.amplifyframework.core.Amplify
 import com.amplifyframework.storage.s3.AWSS3StoragePlugin
+import com.android.volley.toolbox.JsonObjectRequest
+import com.android.volley.toolbox.Volley
 import org.json.JSONObject
 
 
@@ -81,77 +85,82 @@ class SecondFragment : Fragment() {
             Amplify.Storage.uploadInputStream("Image.png", stream, {
                 Log.i("MyAmplifyApp", "Successfully uploaded: ${it.key}")
 
-                //api call to get the jobId
-
-                //body
-                val finalBody = JSONObject()
-                val temp1 = JSONObject()
-                temp1.put("identifier", "c60c8dbd79")
-                temp1.put("version", "0.0.2")
-
-                finalBody.put("model", temp1)
-
-                val temp2 = JSONObject()
-                temp2.put("bucket", "modzybucket35738-dev")
-                temp2.put("key", "public/config.json")
-
-                val confiWaliBody = JSONObject()
-
-                //daalni hai
-                confiWaliBody.put("config.json", temp2)
-
-                val temp3 = JSONObject()
-                temp3.put("bucket", "modzybucket35738-dev")
-                temp3.put("key", "public/Image.png")
-
-                val inputWaliBody = JSONObject()
-                inputWaliBody.put("input",temp3)
-                inputWaliBody.put("config.json", temp2)
-
-                val body0001 = JSONObject()
-
-
-//                body0001.put("0001",inputWaliBody)
-
-                val sourcesWaliBaat = JSONObject()
-                sourcesWaliBaat.put("0001", inputWaliBody)
-
-                val properInput = JSONObject()
-
-//                val tempo = JSONObject()
-                properInput.put("type", "aws-s3")
-                properInput.put("accessKeyID", "AKIATLNIEWDMNMKGF4EF")
-                properInput.put("secretAccessKey", "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")
-                properInput.put("region", "us-east-2")
-                properInput.put("sources", sourcesWaliBaat)
-
-                finalBody.put("input", properInput)
-                Log.i("body",finalBody.toString())
-
-
-
-//                val temp3 = JSONObject()
-//                temp3.put("input", "public/Image.png")
-//                temp3.put("config.json", exampleFile)
-//
-//                val temp2 = JSONObject()
-//                temp2.put("my-input", temp3)
-//
-//                val temp4 = JSONObject()
-//                temp4.put("type", "embedded")
-//                temp4.put("sources", temp2)
-
-                //final body
-//                finalBody.put("input", temp4)
-//                Log.i("finalBody", finalBody.toString())
-
-
+                getJobId()
             }, {
                 Log.e("MyAmplifyApp", "Upload failed", it)
             })
         }
     }
+
+    private fun getJobId() {
+        //api call to get the jobId
+
+        val url = "https://app.modzy.com/api/jobs"
+
+        //body
+        val finalBody = JSONObject()
+        val temp1 = JSONObject()
+        temp1.put("identifier", "c60c8dbd79")
+        temp1.put("version", "0.0.2")
+
+        finalBody.put("model", temp1)
+
+        val temp2 = JSONObject()
+        temp2.put("bucket", "modzybucket35738-dev")
+        temp2.put("key", "public/config.json")
+
+        val confiWaliBody = JSONObject()
+
+        //daalni hai
+        confiWaliBody.put("config.json", temp2)
+
+        val temp3 = JSONObject()
+        temp3.put("bucket", "modzybucket35738-dev")
+        temp3.put("key", "public/Image.png")
+
+        val inputWaliBody = JSONObject()
+        inputWaliBody.put("input", temp3)
+        inputWaliBody.put("config.json", temp2)
+
+        val body0001 = JSONObject()
+        val sourcesWaliBaat = JSONObject()
+        sourcesWaliBaat.put("0001", inputWaliBody)
+
+        val properInput = JSONObject()
+        properInput.put("type", "aws-s3")
+        properInput.put("accessKeyID", "AKIATLNIEWDMNMKGF4EF")
+        properInput.put("secretAccessKey", "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")
+        properInput.put("region", "us-east-2")
+        properInput.put("sources", sourcesWaliBaat)
+
+        finalBody.put("input", properInput)
+        Log.i("body", finalBody.toString())
+
+        val queue = Volley.newRequestQueue(viewOfLayout2nd.context)
+        var response = ""
+        val req = object : JsonObjectRequest(
+            Method.POST, url, finalBody,
+            {
+                Log.i("inside", "Inside Api Call")
+
+                response = it.getString("jobIdentifier")
+//                Handler().postDelayed({ getTopics(response) }, 3000)
+                Log.i("identifier", response)
+                Toast.makeText(requireContext(), "Api Call success", Toast.LENGTH_SHORT).show()
+
+            }, {
+                Toast.makeText(requireContext(), "Api Call Failed", Toast.LENGTH_SHORT).show()
+                Log.i("status code", it.message.toString())
+            }) {
+            override fun getHeaders(): MutableMap<String, String> {
+                val headerMap = mutableMapOf<String, String>()
+                headerMap["Authorization"] = "ApiKey KSQslWseSzQ3hfcWeC0A.lMIZQC7rTsApVTnDeArW"
+                headerMap["Content-Type"] = "application/json"
+                headerMap["Accept"] = "application/json"
+                headerMap["User-Agent"] = "PostmanRuntime/7.28.4"
+                return headerMap
+            }
+        }
+        queue.add(req)
+    }
 }
-
-
-
