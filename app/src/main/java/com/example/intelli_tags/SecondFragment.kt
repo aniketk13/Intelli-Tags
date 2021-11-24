@@ -144,7 +144,7 @@ class SecondFragment : Fragment() {
                 Log.i("inside", "Inside Api Call")
 
                 response = it.getString("jobIdentifier")
-//                Handler().postDelayed({ getTopics(response) }, 3000)
+                Handler().postDelayed({ getTextOut(response) }, 8000)
                 Log.i("identifier", response)
                 Toast.makeText(requireContext(), "Api Call success", Toast.LENGTH_SHORT).show()
 
@@ -162,5 +162,36 @@ class SecondFragment : Fragment() {
             }
         }
         queue.add(req)
+    }
+    private fun getTextOut(response: String) {
+        Log.i("status", response)
+
+        val queue2 = Volley.newRequestQueue(viewOfLayout2nd.context)
+        val req = object : JsonObjectRequest(
+            Method.GET, "https://app.modzy.com/api/results/$response", null,
+            {
+                Log.i("inside", "Inside Api Call")
+                val outputText = (it.getJSONObject("results")).getJSONObject("0001")
+                    .getJSONObject("results.json").getString("text")
+
+                Log.i("Text", outputText.toString())
+                Toast.makeText(requireContext(), "Api Call success", Toast.LENGTH_SHORT).show()
+
+            }, {
+                Toast.makeText(requireContext(), "Api Call Failed second", Toast.LENGTH_SHORT)
+                    .show()
+                Log.i("status code", it.message.toString())
+            }) {
+            override fun getHeaders(): MutableMap<String, String> {
+                val headerMap = mutableMapOf<String, String>()
+                headerMap["Authorization"] = "ApiKey KSQslWseSzQ3hfcWeC0A.lMIZQC7rTsApVTnDeArW"
+                headerMap["Content-Type"] = "application/json"
+                headerMap["Accept"] = "application/json"
+                headerMap["User-Agent"] = "PostmanRuntime/7.28.4"
+                return headerMap
+            }
+        }
+        queue2.add(req)
+
     }
 }
