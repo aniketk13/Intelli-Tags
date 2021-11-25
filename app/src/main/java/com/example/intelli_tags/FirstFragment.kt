@@ -29,12 +29,12 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
         viewOfLayout = inflater.inflate(R.layout.fragment_first, container, false)
         viewOfLayout.button.setOnClickListener {
             val text = viewOfLayout.TextInputEditText.text.toString()
-            Log.i("text", text)
             processText(text)
         }
         return viewOfLayout
     }
 
+    //function to copy the text to clipboard
     private fun copy_to_clipboard(topics: String) {
         val textToCopy = topics
         val clipboard =
@@ -68,8 +68,6 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
         val req = object : JsonObjectRequest(
             Method.POST, url, body,
             {
-                Log.i("inside", "Inside Api Call")
-
                 response = it.getString("jobIdentifier")
                 Handler().postDelayed({ getTopics(response) }, 3000)
                 Log.i("identifier", response)
@@ -91,6 +89,7 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
         queue.add(req)
     }
 
+    //getting the topics of the text
     fun getTopics(response: String) {
         Log.i("status", response)
 
@@ -98,7 +97,6 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
         val req = object : JsonObjectRequest(
             Method.GET, "https://app.modzy.com/api/results/$response", null,
             {
-                Log.i("inside", "Inside Api Call")
                 val topics = (it.getJSONObject("results")).getJSONObject("my-input")
                     .getJSONArray("results.json")
                 Log.i("topics", topics.toString())
