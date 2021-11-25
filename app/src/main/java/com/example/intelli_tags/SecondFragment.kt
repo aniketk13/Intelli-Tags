@@ -15,6 +15,7 @@ import android.content.ClipboardManager
 import android.net.Uri
 import android.os.Handler
 import android.provider.MediaStore
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
@@ -30,6 +31,7 @@ import java.lang.StringBuilder
 class SecondFragment : Fragment() {
 
     private lateinit var viewOfLayout2nd: View
+    lateinit var progressBar: ProgressBar
     lateinit var exampleFile: File
     private var imageUri: Uri? = null
     override fun onCreateView(
@@ -38,6 +40,9 @@ class SecondFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         viewOfLayout2nd = inflater.inflate(R.layout.fragment_second, container, false)
+        progressBar=viewOfLayout2nd.findViewById(R.id.progressBar2nd)
+        progressBar.visibility = View.GONE
+
         try {
             Amplify.addPlugin(AWSCognitoAuthPlugin())
             Amplify.addPlugin(AWSS3StoragePlugin())
@@ -73,6 +78,7 @@ class SecondFragment : Fragment() {
 
     //getting the image URI
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        progressBar.visibility = View.VISIBLE
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == RESULT_OK && requestCode == 100) {
             imageUri = data?.data
@@ -316,6 +322,8 @@ class SecondFragment : Fragment() {
                 for (i in 0 until topics.length())
                     output.append("#").append(topics[i]).append("\n")
                 Log.i("topics", output.toString())
+                //progress bar stops
+                progressBar.visibility = View.GONE
                 viewOfLayout2nd.findViewById<TextView>(R.id.textView).text = output
                 viewOfLayout2nd.button3.setOnClickListener {
                     copy_to_clipboard(output.toString())

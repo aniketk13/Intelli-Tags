@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
@@ -32,6 +33,7 @@ import java.lang.StringBuilder
 
 class ThirdFragment : Fragment() {
     private lateinit var viewOfLayout3rd: View
+    lateinit var progressBar: ProgressBar
     private var videoUri: Uri? = null
 
     override fun onCreateView(
@@ -40,6 +42,8 @@ class ThirdFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         viewOfLayout3rd = inflater.inflate(R.layout.fragment_third, container, false)
+        progressBar=viewOfLayout3rd.findViewById(R.id.progressBar3rd)
+        progressBar.visibility = View.GONE
         try {
 //            Amplify startup
             Amplify.addPlugin(AWSCognitoAuthPlugin())
@@ -57,14 +61,15 @@ class ThirdFragment : Fragment() {
         return viewOfLayout3rd
     }
 
-//    Gallery launch function to select a video file
+    //    Gallery launch function to select a video file
     private fun launchGallery() {
         val gallery = Intent(Intent.ACTION_PICK, MediaStore.Video.Media.INTERNAL_CONTENT_URI)
         startActivityForResult(gallery, 100)
     }
 
-//    This runs just after the video is selected to check if it was a success
+    //    This runs just after the video is selected to check if it was a success
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        progressBar.visibility = View.VISIBLE
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK && requestCode == 100) {
             videoUri = data?.data
@@ -75,7 +80,7 @@ class ThirdFragment : Fragment() {
         }
     }
 
-//    Function to upload the selected video to AWS
+    //    Function to upload the selected video to AWS
     private fun uploadVideoToS3(videoUri: Uri?) {
         val stream = videoUri?.let { requireContext().contentResolver.openInputStream(it) }
 
@@ -92,7 +97,7 @@ class ThirdFragment : Fragment() {
         }
     }
 
-//    Function to call Video Captioning API and extract the JobId
+    //    Function to call Video Captioning API and extract the JobId
     private fun getJobId() {
 
         val url = "https://app.modzy.com/api/jobs"
@@ -137,15 +142,13 @@ class ThirdFragment : Fragment() {
 
 //                Calling getStatus to check if job is completed
                 getStatus(response)
-            }
-            ,
+            },
             {
 //                If network call fails
                 Log.i("Video-Captioning API Call Failed", it.message.toString())
             }
-        )
-        {
-//            Writing the required Headers for API call
+        ) {
+            //            Writing the required Headers for API call
             override fun getHeaders(): MutableMap<String, String> {
                 val headerMap = mutableMapOf<String, String>()
                 headerMap["Authorization"] = "ApiKey KSQslWseSzQ3hfcWeC0A.lMIZQC7rTsApVTnDeArW"
@@ -158,7 +161,7 @@ class ThirdFragment : Fragment() {
         queue.add(req)
     }
 
-//    Function to check if job is completed
+    //    Function to check if job is completed
     private fun getStatus(response: String) {
         var outputText = ""
         val queue2 = Volley.newRequestQueue(viewOfLayout3rd.context)
@@ -191,7 +194,7 @@ class ThirdFragment : Fragment() {
         queue2.add(req)
     }
 
-//    Extracting the caption from Video-Captioning JobId
+    //    Extracting the caption from Video-Captioning JobId
     private fun getTextOut(response: String) {
 
         val queue2 = Volley.newRequestQueue(viewOfLayout3rd.context)
@@ -220,7 +223,7 @@ class ThirdFragment : Fragment() {
         queue2.add(req)
     }
 
-//    Sending extracted caption to Text-Topic Modelling API Call for jobId generation
+    //    Sending extracted caption to Text-Topic Modelling API Call for jobId generation
     private fun processText(text: String) {
 
         val url = "https://app.modzy.com/api/jobs"
@@ -255,7 +258,7 @@ class ThirdFragment : Fragment() {
                 response = it.getString("jobIdentifier")
                 Log.i("Text-Topic Modelling JobId", response)
 //                Handler().postDelayed({ getTopics(response) }, 3000)
-                    getStatus2(response)
+                getStatus2(response)
             }, {
                 Log.i("Text-Topic Modelling Network Call Failed", it.message.toString())
             }) {
@@ -304,7 +307,7 @@ class ThirdFragment : Fragment() {
         queue2.add(req)
     }
 
-//    Extracting the topics from Text-Topic Modelling Job-Id
+    //    Extracting the topics from Text-Topic Modelling Job-Id
     fun getTopics(response: String) {
         Log.i("status", response)
 
@@ -322,7 +325,8 @@ class ThirdFragment : Fragment() {
                     output.append("#").append(topics[i]).append(" ")
 
                 Log.i("Tagged Response", output.toString())
-
+//progress bar stops
+                progressBar.visibility = View.GONE
 //                Printing the Tagged Response on Screen
                 viewOfLayout3rd.findViewById<TextView>(R.id.textView2).text = output
 
@@ -331,7 +335,10 @@ class ThirdFragment : Fragment() {
                     copy_to_clipboard(output.toString())
                 }
             }, {
-                Log.i("Result Extraction failed from Text-Topic Modelling JobId", it.message.toString())
+                Log.i(
+                    "Result Extraction failed from Text-Topic Modelling JobId",
+                    it.message.toString()
+                )
             }) {
             override fun getHeaders(): MutableMap<String, String> {
                 val headerMap = mutableMapOf<String, String>()
@@ -345,7 +352,7 @@ class ThirdFragment : Fragment() {
         queue2.add(req)
     }
 
-//    Function to copy tagged response to clipboard
+    //    Function to copy tagged response to clipboard
     private fun copy_to_clipboard(topics: String) {
         val clipboard =
             ContextCompat.getSystemService(
