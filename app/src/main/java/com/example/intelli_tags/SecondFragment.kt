@@ -24,14 +24,9 @@ import com.amplifyframework.core.Amplify
 import com.amplifyframework.storage.s3.AWSS3StoragePlugin
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
-import kotlinx.android.synthetic.main.fragment_first.view.*
 import org.json.JSONObject
 import java.lang.StringBuilder
 
-
-/**
- * A simple [Fragment] subclass.
- */
 class SecondFragment : Fragment() {
 
     private lateinit var viewOfLayout2nd: View
@@ -55,11 +50,11 @@ class SecondFragment : Fragment() {
         viewOfLayout2nd.getFiles.setOnClickListener {
             Log.i("hello", "hello")
             launchGallery()
-
         }
         return viewOfLayout2nd
     }
 
+    //uploading the file to AWS
     private fun uploadFile() {
         exampleFile = File(requireContext().filesDir, "config.json")
         exampleFile.writeText("{\"languages\": [\"eng\", \"deu\", \"fra\", \"ita\", \"lat\", \"por\", \"spa\"] }")
@@ -70,27 +65,28 @@ class SecondFragment : Fragment() {
         )
     }
 
+    //launcing the gallery of user
     private fun launchGallery() {
         val gallery = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
         startActivityForResult(gallery, 100)
     }
 
+    //getting the image URI
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == RESULT_OK && requestCode == 100) {
             imageUri = data?.data
-            Log.i("hogaya", "andar")
-            Log.i("hogaya", imageUri.toString())
+            Log.i("Image URI", imageUri.toString())
             uploadPhotoToS3(imageUri)
         }
     }
 
+    //uploading the photo to AWS S3 bucket
     private fun uploadPhotoToS3(imageUri: Uri?) {
         val stream = imageUri?.let { requireContext().contentResolver.openInputStream(it) }
         if (stream != null) {
             Amplify.Storage.uploadInputStream("Image.png", stream, {
                 Log.i("MyAmplifyApp", "Successfully uploaded: ${it.key}")
-
                 getJobId()
             }, {
                 Log.e("MyAmplifyApp", "Upload failed", it)
@@ -98,12 +94,9 @@ class SecondFragment : Fragment() {
         }
     }
 
+    //getting the job ID
     private fun getJobId() {
-        //api call to get the jobId
-
         val url = "https://app.modzy.com/api/jobs"
-
-        //body
         val finalBody = JSONObject()
         val temp1 = JSONObject()
         temp1.put("identifier", "c60c8dbd79")
@@ -115,40 +108,35 @@ class SecondFragment : Fragment() {
         temp2.put("bucket", "modzybucket35738-dev")
         temp2.put("key", "public/config.json")
 
-        val confiWaliBody = JSONObject()
-
-        //daalni hai
-        confiWaliBody.put("config.json", temp2)
+        val configBody = JSONObject()
+        configBody.put("config.json", temp2)
 
         val temp3 = JSONObject()
         temp3.put("bucket", "modzybucket35738-dev")
         temp3.put("key", "public/Image.png")
 
-        val inputWaliBody = JSONObject()
-        inputWaliBody.put("input", temp3)
-        inputWaliBody.put("config.json", temp2)
+        val inputBody = JSONObject()
+        inputBody.put("input", temp3)
+        inputBody.put("config.json", temp2)
 
-        val body0001 = JSONObject()
-        val sourcesWaliBaat = JSONObject()
-        sourcesWaliBaat.put("0001", inputWaliBody)
+        val sourcesBody = JSONObject()
+        sourcesBody.put("0001", inputBody)
 
         val properInput = JSONObject()
         properInput.put("type", "aws-s3")
         properInput.put("accessKeyID", "AKIATLNIEWDMNMKGF4EF")
         properInput.put("secretAccessKey", "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")
         properInput.put("region", "us-east-2")
-        properInput.put("sources", sourcesWaliBaat)
+        properInput.put("sources", sourcesBody)
 
         finalBody.put("input", properInput)
-        Log.i("body", finalBody.toString())
+        Log.i("Final Body", finalBody.toString())
 
         val queue = Volley.newRequestQueue(viewOfLayout2nd.context)
         var response = ""
         val req = object : JsonObjectRequest(
             Method.POST, url, finalBody,
             {
-                Log.i("inside", "Inside Api Call")
-
                 response = it.getString("jobIdentifier")
                 Handler().postDelayed({ getTextOut(response) }, 8000)
                 Log.i("identifier", response)
@@ -169,14 +157,14 @@ class SecondFragment : Fragment() {
         }
         queue.add(req)
     }
+
+    //getting the text of the image
     private fun getTextOut(response: String) {
         Log.i("status", response)
-
         val queue2 = Volley.newRequestQueue(viewOfLayout2nd.context)
         val req = object : JsonObjectRequest(
             Method.GET, "https://app.modzy.com/api/results/$response", null,
             {
-                Log.i("inside", "Inside Api Call")
                 val outputText = (it.getJSONObject("results")).getJSONObject("0001")
                     .getJSONObject("results.json").getString("text")
                 processText(outputText)
@@ -198,12 +186,11 @@ class SecondFragment : Fragment() {
             }
         }
         queue2.add(req)
-
     }
+
+    //processing the text to get the topics
     private fun processText(text: String) {
 
-//        val text =
-//            "API is the acronym for Application Programming Interface, which is a software intermediary that allows two applications to talk to each other. Each time you use an app like Facebook, send an instant message, or check the weather on your phone, you're using an API."
         val url = "https://app.modzy.com/api/jobs"
         val body = JSONObject()
         val body2 = JSONObject()
@@ -220,17 +207,13 @@ class SecondFragment : Fragment() {
 
         //final body
         body.put("input", body5)
-
         Log.i("body", body.toString())
 
-//
         val queue = Volley.newRequestQueue(viewOfLayout2nd.context)
         var response = ""
         val req = object : JsonObjectRequest(
             Method.POST, url, body,
             {
-                Log.i("inside", "Inside Api Call")
-
                 response = it.getString("jobIdentifier")
                 Handler().postDelayed({ getTopics(response) }, 3000)
                 Log.i("identifier", response)
@@ -251,14 +234,13 @@ class SecondFragment : Fragment() {
         }
         queue.add(req)
     }
-    fun getTopics(response: String) {
-        Log.i("status", response)
 
+    //getting topics of the text
+    fun getTopics(response: String) {
         val queue2 = Volley.newRequestQueue(viewOfLayout2nd.context)
         val req = object : JsonObjectRequest(
             Method.GET, "https://app.modzy.com/api/results/$response", null,
             {
-                Log.i("inside", "Inside Api Call")
                 val topics = (it.getJSONObject("results")).getJSONObject("my-input")
                     .getJSONArray("results.json")
                 Log.i("topics", topics.toString())
@@ -270,7 +252,6 @@ class SecondFragment : Fragment() {
                 viewOfLayout2nd.button3.setOnClickListener {
                     copy_to_clipboard(output.toString())
                 }
-//                copy_to_clipboard(output.toString())
                 Toast.makeText(requireContext(), "Api Call success", Toast.LENGTH_SHORT).show()
 
             }, {
@@ -289,9 +270,10 @@ class SecondFragment : Fragment() {
         }
         queue2.add(req)
     }
+
+    //function to copy the text to the clipboard
     private fun copy_to_clipboard(topics: String) {
         val textToCopy = topics
-
         val clipboard =
             ContextCompat.getSystemService(
                 requireContext(),
