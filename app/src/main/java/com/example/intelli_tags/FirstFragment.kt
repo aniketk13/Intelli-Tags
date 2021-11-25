@@ -30,8 +30,13 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
         savedInstanceState: Bundle?
     ): View? {
         viewOfLayout = inflater.inflate(R.layout.fragment_first, container, false)
+        progressBar=viewOfLayout.findViewById(R.id.progressBar)
+        progressBar.visibility = View.GONE
         viewOfLayout.button.setOnClickListener {
             val text = viewOfLayout.TextInputEditText.text.toString()
+            //prgress bar
+//            progressBar = viewOfLayout.findViewById(R.id.progressBar)
+            progressBar.visibility = View.VISIBLE
             processText(text)
         }
         return viewOfLayout
@@ -47,10 +52,6 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
     }
 
     fun processText(text: String) {
-
-        //prgress bar
-        progressBar = viewOfLayout.findViewById(R.id.progressBar)
-        progressBar.visibility = View.VISIBLE
 
         val url = "https://app.modzy.com/api/jobs"
         val body = JSONObject()
@@ -112,11 +113,13 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
 //                Checking job status every 10 sec
                 Handler().postDelayed({
                     if (outputText == "COMPLETED")
+                    {
+
 //                        sending job id to extract the caption
-                        getTopics(response)
+                        getTopics(response)}
                     else
                         getStatus(response)
-                }, 1000)
+                }, 500)
 
             }, {
                 Log.i("Job Status Failed", it.message.toString())

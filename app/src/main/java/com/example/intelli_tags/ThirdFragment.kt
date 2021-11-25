@@ -254,8 +254,8 @@ class ThirdFragment : Fragment() {
             {
                 response = it.getString("jobIdentifier")
                 Log.i("Text-Topic Modelling JobId", response)
-                Handler().postDelayed({ getTopics(response) }, 3000)
-
+//                Handler().postDelayed({ getTopics(response) }, 3000)
+                    getStatus2(response)
             }, {
                 Log.i("Text-Topic Modelling Network Call Failed", it.message.toString())
             }) {
@@ -269,6 +269,39 @@ class ThirdFragment : Fragment() {
             }
         }
         queue.add(req)
+    }
+
+    //    Function to check if job is completed
+    private fun getStatus2(response: String) {
+        var outputText = ""
+        val queue2 = Volley.newRequestQueue(viewOfLayout3rd.context)
+        val req = object : JsonObjectRequest(
+            Method.GET, "https://app.modzy.com/api/jobs/$response", null,
+            {
+                outputText = it.getString("status")
+
+//                Checking job status every 10 sec
+                Handler().postDelayed({
+                    if (outputText == "COMPLETED")
+//                        sending job id to extract the caption
+                        getTopics(response)
+                    else
+                        getStatus2(response)
+                }, 500)
+
+            }, {
+                Log.i("Job Status Failed", it.message.toString())
+            }) {
+            override fun getHeaders(): MutableMap<String, String> {
+                val headerMap = mutableMapOf<String, String>()
+                headerMap["Authorization"] = "ApiKey KSQslWseSzQ3hfcWeC0A.lMIZQC7rTsApVTnDeArW"
+                headerMap["Content-Type"] = "application/json"
+                headerMap["Accept"] = "application/json"
+                headerMap["User-Agent"] = "PostmanRuntime/7.28.4"
+                return headerMap
+            }
+        }
+        queue2.add(req)
     }
 
 //    Extracting the topics from Text-Topic Modelling Job-Id
