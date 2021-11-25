@@ -35,6 +35,7 @@ import java.lang.StringBuilder
 class ThirdFragment : Fragment() {
     private lateinit var viewOfLayout3rd: View
     private var videoUri: Uri? = null
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -42,14 +43,15 @@ class ThirdFragment : Fragment() {
     ): View? {
         viewOfLayout3rd = inflater.inflate(R.layout.fragment_third, container, false)
         try {
+//            Amplify startup
             Amplify.addPlugin(AWSCognitoAuthPlugin())
             Amplify.addPlugin(AWSS3StoragePlugin())
             Amplify.configure(requireContext())
             Log.i("MyAmplifyApp", "Initialized Amplify")
-//            uploadFile()
         } catch (error: AmplifyException) {
             Log.e("MyAmplifyApp", "Could not initialize Amplify", error)
         }
+//        checking
         viewOfLayout3rd.button2.setOnClickListener {
             Log.i("hello", "hello")
             launchGallery()
@@ -123,8 +125,8 @@ class ThirdFragment : Fragment() {
 
         val properInput = JSONObject()
         properInput.put("type", "aws-s3")
-        properInput.put("accessKeyID", "AKIATLNIEWDMNMKGF4EF")
-        properInput.put("secretAccessKey", "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")
+        properInput.put("accessKeyID", "AKIATLNIEWDMI6TF65EU")
+        properInput.put("secretAccessKey", "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")
         properInput.put("region", "us-east-2")
         properInput.put("sources", sourcesWaliBaat)
 
@@ -139,7 +141,8 @@ class ThirdFragment : Fragment() {
                 Log.i("inside", "Inside Api Call")
 
                 response = it.getString("jobIdentifier")
-                Handler().postDelayed({ getTextOut(response) }, 60000)
+                getStatus(response)
+//                Handler().postDelayed({ getTextOut(response) }, 60000)
                 Log.i("identifier", response)
                 Toast.makeText(requireContext(), "Api Call success", Toast.LENGTH_SHORT).show()
 
@@ -157,6 +160,40 @@ class ThirdFragment : Fragment() {
             }
         }
         queue.add(req)
+    }
+
+    private fun getStatus(response: String) {
+        Log.i("insidestatus", "hello")
+        var outputText = ""
+        val queue2 = Volley.newRequestQueue(viewOfLayout3rd.context)
+        val req = object : JsonObjectRequest(
+            Method.GET, "https://app.modzy.com/api/jobs/$response", null,
+            {
+                Log.i("identifierStatus", "Inside Api Call")
+                outputText = it.getString("status")
+                Handler().postDelayed({
+                    if (outputText == "COMPLETED")
+                        getTextOut(response)
+                    else
+                        getStatus(response)
+                }, 10000)
+
+            }, {
+                Toast.makeText(requireContext(), "Api Call Failed second", Toast.LENGTH_SHORT)
+                    .show()
+                Log.i("status code", it.message.toString())
+            }) {
+            override fun getHeaders(): MutableMap<String, String> {
+                val headerMap = mutableMapOf<String, String>()
+                headerMap["Authorization"] = "ApiKey KSQslWseSzQ3hfcWeC0A.lMIZQC7rTsApVTnDeArW"
+                headerMap["Content-Type"] = "application/json"
+                headerMap["Accept"] = "application/json"
+                headerMap["User-Agent"] = "PostmanRuntime/7.28.4"
+                return headerMap
+            }
+        }
+        queue2.add(req)
+//        getTextOut(response)
     }
 
     private fun getTextOut(response: String) {
@@ -257,7 +294,7 @@ class ThirdFragment : Fragment() {
                 for (i in 0 until topics.length())
                     output.append("#").append(topics[i]).append("\n")
                 Log.i("topics", output.toString())
-                viewOfLayout3rd.findViewById<TextView>(R.id.textView).text = output
+                viewOfLayout3rd.findViewById<TextView>(R.id.textView2).text = output
                 viewOfLayout3rd.button4.setOnClickListener {
                     copy_to_clipboard(output.toString())
                 }
