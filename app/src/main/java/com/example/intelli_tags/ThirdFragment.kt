@@ -3,11 +3,14 @@ package com.example.intelli_tags
 import android.app.Activity
 import android.content.ClipData
 import android.content.ClipboardManager
+import android.content.ContentValues
 import android.content.Intent
+import android.database.Cursor
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.provider.MediaStore
+import android.provider.OpenableColumns
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -25,6 +28,7 @@ import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import kotlinx.android.synthetic.main.fragment_third.view.*
 import org.json.JSONObject
+import java.lang.Exception
 import java.lang.StringBuilder
 
 /**
@@ -73,6 +77,21 @@ class ThirdFragment : Fragment() {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK && requestCode == 100) {
             videoUri = data?.data
+            val returnCursor: Cursor? =
+                videoUri?.let { requireContext().contentResolver.query(it, null, null, null, null) }
+            try {
+                val nameIndex: Int = returnCursor!!.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                returnCursor.moveToFirst()
+                val fileName = returnCursor.getString(nameIndex)
+                Log.i("hello", "file name : $fileName")
+            } catch (e: Exception) {
+                Log.i(ContentValues.TAG, "error: ", e)
+                //handle the failure cases here
+            } finally {
+                if (returnCursor != null) {
+                    returnCursor.close()
+                }
+            }
             Log.i("Video Uri", videoUri.toString())
 
 //            Calling this function to upload video to AWS
