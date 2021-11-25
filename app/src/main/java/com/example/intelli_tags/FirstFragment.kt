@@ -17,6 +17,7 @@ import kotlinx.android.synthetic.main.fragment_first.view.*
 import org.json.JSONObject
 import java.lang.StringBuilder
 import android.content.ClipData
+import android.widget.ProgressBar
 
 class FirstFragment : Fragment(R.layout.fragment_first) {
 
@@ -44,6 +45,11 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
     }
 
     fun processText(text: String) {
+
+        //prgress bar
+        val progressBar: ProgressBar = viewOfLayout.findViewById(R.id.progressBar)
+        progressBar.visibility = View.VISIBLE
+
         val url = "https://app.modzy.com/api/jobs"
         val body = JSONObject()
         val body2 = JSONObject()
