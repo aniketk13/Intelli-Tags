@@ -21,6 +21,7 @@ import java.io.File
 /**
  * A simple [Fragment] subclass.
  */
+
 class ThirdFragment : Fragment() {
     private lateinit var viewOfLayout3rd: View
     private var videoUri: Uri? = null
