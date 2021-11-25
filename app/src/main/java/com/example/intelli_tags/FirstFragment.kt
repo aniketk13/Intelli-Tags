@@ -18,10 +18,12 @@ import org.json.JSONObject
 import java.lang.StringBuilder
 import android.content.ClipData
 import android.widget.ProgressBar
+import kotlinx.android.synthetic.main.fragment_first.*
 
 class FirstFragment : Fragment(R.layout.fragment_first) {
 
     lateinit var viewOfLayout: View
+    lateinit var progressBar: ProgressBar
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -47,7 +49,7 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
     fun processText(text: String) {
 
         //prgress bar
-        val progressBar: ProgressBar = viewOfLayout.findViewById(R.id.progressBar)
+        progressBar = viewOfLayout.findViewById(R.id.progressBar)
         progressBar.visibility = View.VISIBLE
 
         val url = "https://app.modzy.com/api/jobs"
@@ -75,7 +77,7 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
             Method.POST, url, body,
             {
                 response = it.getString("jobIdentifier")
-                Handler().postDelayed({ getTopics(response) }, 3000)
+//                Handler().postDelayed({ getTopics(response) }, 3000)
                 Log.i("identifier", response)
                 Toast.makeText(requireContext(), "Api Call success", Toast.LENGTH_SHORT).show()
 
@@ -105,10 +107,16 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
             {
                 val topics = (it.getJSONObject("results")).getJSONObject("my-input")
                     .getJSONArray("results.json")
+
+
+
                 Log.i("topics", topics.toString())
                 var output = StringBuilder()
                 for (i in 0 until topics.length())
                     output.append("#").append(topics[i]).append("\n")
+
+                //progress bar stops
+                progressBar.visibility = View.GONE
                 Log.i("topics", output.toString())
                 viewOfLayout.findViewById<TextView>(R.id.resultTopics).text = output
                 viewOfLayout.copy.setOnClickListener {
