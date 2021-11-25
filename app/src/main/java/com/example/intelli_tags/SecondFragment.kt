@@ -24,14 +24,9 @@ import com.amplifyframework.core.Amplify
 import com.amplifyframework.storage.s3.AWSS3StoragePlugin
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
-import kotlinx.android.synthetic.main.fragment_first.view.*
 import org.json.JSONObject
 import java.lang.StringBuilder
 
-
-/**
- * A simple [Fragment] subclass.
- */
 class SecondFragment : Fragment() {
 
     private lateinit var viewOfLayout2nd: View
@@ -99,8 +94,8 @@ class SecondFragment : Fragment() {
     }
 
     private fun getJobId() {
-        //api call to get the jobId
 
+        //api call to get the jobId
         val url = "https://app.modzy.com/api/jobs"
 
         //body
@@ -115,22 +110,22 @@ class SecondFragment : Fragment() {
         temp2.put("bucket", "modzybucket35738-dev")
         temp2.put("key", "public/config.json")
 
-        val confiWaliBody = JSONObject()
+        val configBody = JSONObject()
 
         //daalni hai
-        confiWaliBody.put("config.json", temp2)
+        configBody.put("config.json", temp2)
 
         val temp3 = JSONObject()
         temp3.put("bucket", "modzybucket35738-dev")
         temp3.put("key", "public/Image.png")
 
-        val inputWaliBody = JSONObject()
-        inputWaliBody.put("input", temp3)
-        inputWaliBody.put("config.json", temp2)
+        val inputBody = JSONObject()
+        inputBody.put("input", temp3)
+        inputBody.put("config.json", temp2)
 
-        val body0001 = JSONObject()
+//        val body0001 = JSONObject()
         val sourcesWaliBaat = JSONObject()
-        sourcesWaliBaat.put("0001", inputWaliBody)
+        sourcesWaliBaat.put("0001", inputBody)
 
         val properInput = JSONObject()
         properInput.put("type", "aws-s3")
@@ -169,9 +164,10 @@ class SecondFragment : Fragment() {
         }
         queue.add(req)
     }
-    private fun getTextOut(response: String) {
-        Log.i("status", response)
 
+    private fun getTextOut(response: String) {
+
+        Log.i("status", response)
         val queue2 = Volley.newRequestQueue(viewOfLayout2nd.context)
         val req = object : JsonObjectRequest(
             Method.GET, "https://app.modzy.com/api/results/$response", null,
@@ -198,12 +194,10 @@ class SecondFragment : Fragment() {
             }
         }
         queue2.add(req)
-
     }
+
     private fun processText(text: String) {
 
-//        val text =
-//            "API is the acronym for Application Programming Interface, which is a software intermediary that allows two applications to talk to each other. Each time you use an app like Facebook, send an instant message, or check the weather on your phone, you're using an API."
         val url = "https://app.modzy.com/api/jobs"
         val body = JSONObject()
         val body2 = JSONObject()
@@ -220,17 +214,14 @@ class SecondFragment : Fragment() {
 
         //final body
         body.put("input", body5)
-
         Log.i("body", body.toString())
 
-//
         val queue = Volley.newRequestQueue(viewOfLayout2nd.context)
         var response = ""
         val req = object : JsonObjectRequest(
             Method.POST, url, body,
             {
                 Log.i("inside", "Inside Api Call")
-
                 response = it.getString("jobIdentifier")
                 Handler().postDelayed({ getTopics(response) }, 3000)
                 Log.i("identifier", response)
@@ -251,9 +242,10 @@ class SecondFragment : Fragment() {
         }
         queue.add(req)
     }
-    fun getTopics(response: String) {
-        Log.i("status", response)
 
+    fun getTopics(response: String) {
+
+        Log.i("status", response)
         val queue2 = Volley.newRequestQueue(viewOfLayout2nd.context)
         val req = object : JsonObjectRequest(
             Method.GET, "https://app.modzy.com/api/results/$response", null,
@@ -270,7 +262,6 @@ class SecondFragment : Fragment() {
                 viewOfLayout2nd.button3.setOnClickListener {
                     copy_to_clipboard(output.toString())
                 }
-//                copy_to_clipboard(output.toString())
                 Toast.makeText(requireContext(), "Api Call success", Toast.LENGTH_SHORT).show()
 
             }, {
@@ -289,6 +280,7 @@ class SecondFragment : Fragment() {
         }
         queue2.add(req)
     }
+
     private fun copy_to_clipboard(topics: String) {
         val textToCopy = topics
 

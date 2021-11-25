@@ -1,9 +1,6 @@
 package com.example.intelli_tags
 
-import android.R.attr
-import android.annotation.SuppressLint
 import android.content.ClipboardManager
-import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
@@ -17,56 +14,36 @@ import androidx.core.content.ContextCompat.getSystemService
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import kotlinx.android.synthetic.main.fragment_first.view.*
-import kotlinx.coroutines.*
-import kotlinx.coroutines.withContext
-import org.json.JSONArray
 import org.json.JSONObject
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import java.lang.StringBuilder
-import java.lang.reflect.Method
-import android.R.attr.label
-
 import android.content.ClipData
-import androidx.core.content.ContentProviderCompat.requireContext
-import androidx.core.content.ContextCompat
-
-import androidx.core.content.ContextCompat.getSystemService
-
 
 class FirstFragment : Fragment(R.layout.fragment_first) {
 
     lateinit var viewOfLayout: View
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         viewOfLayout = inflater.inflate(R.layout.fragment_first, container, false)
-
         viewOfLayout.button.setOnClickListener {
             val text = viewOfLayout.TextInputEditText.text.toString()
             Log.i("text", text)
             processText(text)
         }
-
         return viewOfLayout
     }
 
     private fun copy_to_clipboard(topics: String) {
         val textToCopy = topics
-
         val clipboard =
             getSystemService(requireContext(), ClipboardManager::class.java) as ClipboardManager
         val clip = ClipData.newPlainText("label", textToCopy)
         clipboard!!.setPrimaryClip(clip)
     }
-    fun processText(text: String) {
 
-//        val text =
-//            "API is the acronym for Application Programming Interface, which is a software intermediary that allows two applications to talk to each other. Each time you use an app like Facebook, send an instant message, or check the weather on your phone, you're using an API."
+    fun processText(text: String) {
         val url = "https://app.modzy.com/api/jobs"
         val body = JSONObject()
         val body2 = JSONObject()
@@ -86,7 +63,6 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
 
         Log.i("body", body.toString())
 
-//
         val queue = Volley.newRequestQueue(viewOfLayout.context)
         var response = ""
         val req = object : JsonObjectRequest(
@@ -115,7 +91,7 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
         queue.add(req)
     }
 
-     fun getTopics(response: String) {
+    fun getTopics(response: String) {
         Log.i("status", response)
 
         val queue2 = Volley.newRequestQueue(viewOfLayout.context)
@@ -134,7 +110,6 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
                 viewOfLayout.copy.setOnClickListener {
                     copy_to_clipboard(output.toString())
                 }
-//                copy_to_clipboard(output.toString())
                 Toast.makeText(requireContext(), "Api Call success", Toast.LENGTH_SHORT).show()
 
             }, {
