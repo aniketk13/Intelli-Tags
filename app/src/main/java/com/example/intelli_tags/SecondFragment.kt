@@ -12,9 +12,12 @@ import java.io.File
 import android.app.Activity.RESULT_OK
 import android.content.ClipData
 import android.content.ClipboardManager
+import android.content.ContentValues
+import android.database.Cursor
 import android.net.Uri
 import android.os.Handler
 import android.provider.MediaStore
+import android.provider.OpenableColumns
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
@@ -26,6 +29,7 @@ import com.amplifyframework.storage.s3.AWSS3StoragePlugin
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import org.json.JSONObject
+import java.lang.Exception
 import java.lang.StringBuilder
 
 class SecondFragment : Fragment() {
@@ -82,6 +86,21 @@ class SecondFragment : Fragment() {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == RESULT_OK && requestCode == 100) {
             imageUri = data?.data
+            val returnCursor: Cursor? =
+                imageUri?.let { requireContext().contentResolver.query(it, null, null, null, null) }
+            try {
+                val nameIndex: Int = returnCursor!!.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                returnCursor.moveToFirst()
+                val fileName = returnCursor.getString(nameIndex)
+                Log.i("hello", "file name : $fileName")
+            } catch (e: Exception) {
+                Log.i(ContentValues.TAG, "error: ", e)
+                //handle the failure cases here
+            } finally {
+                if (returnCursor != null) {
+                    returnCursor.close()
+                }
+            }
             Log.i("Image URI", imageUri.toString())
             uploadPhotoToS3(imageUri)
         }
