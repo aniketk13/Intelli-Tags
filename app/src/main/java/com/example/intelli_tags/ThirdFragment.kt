@@ -99,7 +99,7 @@ class ThirdFragment : Fragment() {
 //        temp2.put("bucket", "modzybucket35738-dev")
 //        temp2.put("key", "public/config.json")
 
-        val confiWaliBody = JSONObject()
+//        val confiWaliBody = JSONObject()
 
         //daalni hai
 //        confiWaliBody.put("config.json", temp2)
@@ -112,7 +112,7 @@ class ThirdFragment : Fragment() {
         inputWaliBody.put("input", temp3)
 //        inputWaliBody.put("config.json", temp2)
 
-        val body0001 = JSONObject()
+//        val body0001 = JSONObject()
         val sourcesWaliBaat = JSONObject()
         sourcesWaliBaat.put("0001", inputWaliBody)
 
