@@ -78,6 +78,9 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
             {
                 response = it.getString("jobIdentifier")
 //                Handler().postDelayed({ getTopics(response) }, 3000)
+
+                getStatus(response)
+
                 Log.i("identifier", response)
                 Toast.makeText(requireContext(), "Api Call success", Toast.LENGTH_SHORT).show()
 
@@ -97,6 +100,39 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
         queue.add(req)
     }
 
+    //    Function to check if job is completed
+    private fun getStatus(response: String) {
+        var outputText = ""
+        val queue2 = Volley.newRequestQueue(viewOfLayout.context)
+        val req = object : JsonObjectRequest(
+            Method.GET, "https://app.modzy.com/api/jobs/$response", null,
+            {
+                outputText = it.getString("status")
+
+//                Checking job status every 10 sec
+                Handler().postDelayed({
+                    if (outputText == "COMPLETED")
+//                        sending job id to extract the caption
+                        getTopics(response)
+                    else
+                        getStatus(response)
+                }, 1000)
+
+            }, {
+                Log.i("Job Status Failed", it.message.toString())
+            }) {
+            override fun getHeaders(): MutableMap<String, String> {
+                val headerMap = mutableMapOf<String, String>()
+                headerMap["Authorization"] = "ApiKey KSQslWseSzQ3hfcWeC0A.lMIZQC7rTsApVTnDeArW"
+                headerMap["Content-Type"] = "application/json"
+                headerMap["Accept"] = "application/json"
+                headerMap["User-Agent"] = "PostmanRuntime/7.28.4"
+                return headerMap
+            }
+        }
+        queue2.add(req)
+    }
+
     //getting the topics of the text
     fun getTopics(response: String) {
         Log.i("status", response)
@@ -107,14 +143,10 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
             {
                 val topics = (it.getJSONObject("results")).getJSONObject("my-input")
                     .getJSONArray("results.json")
-
-
-
                 Log.i("topics", topics.toString())
                 var output = StringBuilder()
                 for (i in 0 until topics.length())
-                    output.append("#").append(topics[i]).append("\n")
-
+                    output.append("#").append(topics[i]).append(" ")
                 //progress bar stops
                 progressBar.visibility = View.GONE
                 Log.i("topics", output.toString())
