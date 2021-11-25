@@ -23,7 +23,7 @@ import kotlinx.android.synthetic.main.fragment_first.*
 class FirstFragment : Fragment(R.layout.fragment_first) {
 
     lateinit var viewOfLayout: View
-    lateinit var progressBar: ProgressBar
+    lateinit var progressB: ProgressBar
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -49,8 +49,8 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
     fun processText(text: String) {
 
         //prgress bar
-        progressBar = viewOfLayout.findViewById(R.id.progressBar)
-        progressBar.visibility = View.VISIBLE
+        progressB = viewOfLayout.findViewById(R.id.progressBar)
+        progressB.visibility = View.VISIBLE
 
         val url = "https://app.modzy.com/api/jobs"
         val body = JSONObject()
@@ -148,7 +148,8 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
                 for (i in 0 until topics.length())
                     output.append("#").append(topics[i]).append(" ")
                 //progress bar stops
-                progressBar.visibility = View.GONE
+                progressB.visibility = View.GONE
+
                 Log.i("topics", output.toString())
                 viewOfLayout.findViewById<TextView>(R.id.resultTopics).text = output
                 viewOfLayout.copy.setOnClickListener {
