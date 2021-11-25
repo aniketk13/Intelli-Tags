@@ -22,10 +22,8 @@ import com.amplifyframework.core.Amplify
 import com.amplifyframework.storage.s3.AWSS3StoragePlugin
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
-import kotlinx.android.synthetic.main.fragment_second.view.*
 import kotlinx.android.synthetic.main.fragment_third.view.*
 import org.json.JSONObject
-import java.io.File
 import java.lang.StringBuilder
 
 /**
@@ -51,37 +49,42 @@ class ThirdFragment : Fragment() {
         } catch (error: AmplifyException) {
             Log.e("MyAmplifyApp", "Could not initialize Amplify", error)
         }
-//        checking
-        viewOfLayout3rd.button2.setOnClickListener {
-            Log.i("hello", "hello")
-            launchGallery()
 
+//        checking if upload button is clicked to launch gallery
+        viewOfLayout3rd.button2.setOnClickListener {
+            launchGallery()
         }
         return viewOfLayout3rd
     }
 
-
+//    Gallery launch function to select a video file
     private fun launchGallery() {
         val gallery = Intent(Intent.ACTION_PICK, MediaStore.Video.Media.INTERNAL_CONTENT_URI)
         startActivityForResult(gallery, 100)
     }
 
+//    This runs just after the video is selected to check if it was a success
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK && requestCode == 100) {
             videoUri = data?.data
-            Log.i("hogaya", "andar")
-            Log.i("hogaya", videoUri.toString())
+            Log.i("Video Uri", videoUri.toString())
+
+//            Calling this function to upload video to AWS
             uploadVideoToS3(videoUri)
         }
     }
 
+//    Function to upload the selected video to AWS
     private fun uploadVideoToS3(videoUri: Uri?) {
         val stream = videoUri?.let { requireContext().contentResolver.openInputStream(it) }
+
+//    if video uri is not null then uploading the video
         if (stream != null) {
             Amplify.Storage.uploadInputStream("Video.mp4", stream, {
                 Log.i("MyAmplifyApp", "Successfully uploaded: ${it.key}")
 
+//                After completion, starting the API network call to get the job id for video captioning
                 getJobId()
             }, {
                 Log.e("MyAmplifyApp", "Upload failed", it)
@@ -89,67 +92,60 @@ class ThirdFragment : Fragment() {
         }
     }
 
+//    Function to call Video Captioning API and extract the JobId
     private fun getJobId() {
-        //api call to get the jobId
 
         val url = "https://app.modzy.com/api/jobs"
 
-        //body
+        //body formation
         val finalBody = JSONObject()
+
         val temp1 = JSONObject()
         temp1.put("identifier", "cyoxn54q5g")
         temp1.put("version", "0.0.2")
-
         finalBody.put("model", temp1)
-
-//        val temp2 = JSONObject()
-//        temp2.put("bucket", "modzybucket35738-dev")
-//        temp2.put("key", "public/config.json")
-
-//        val confiWaliBody = JSONObject()
-
-        //daalni hai
-//        confiWaliBody.put("config.json", temp2)
 
         val temp3 = JSONObject()
         temp3.put("bucket", "modzybucket35738-dev")
         temp3.put("key", "public/Video.mp4")
 
-        val inputWaliBody = JSONObject()
-        inputWaliBody.put("input", temp3)
-//        inputWaliBody.put("config.json", temp2)
+        val inputBody = JSONObject()
+        inputBody.put("input", temp3)
 
-//        val body0001 = JSONObject()
-        val sourcesWaliBaat = JSONObject()
-        sourcesWaliBaat.put("0001", inputWaliBody)
+        val sourcesObject = JSONObject()
+        sourcesObject.put("0001", inputBody)
 
         val properInput = JSONObject()
         properInput.put("type", "aws-s3")
         properInput.put("accessKeyID", "AKIATLNIEWDMI6TF65EU")
         properInput.put("secretAccessKey", "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")
         properInput.put("region", "us-east-2")
-        properInput.put("sources", sourcesWaliBaat)
+        properInput.put("sources", sourcesObject)
 
         finalBody.put("input", properInput)
-        Log.i("body", finalBody.toString())
 
+        Log.i("Request Body", finalBody.toString())
+
+//    API call for video captioning
         val queue = Volley.newRequestQueue(viewOfLayout3rd.context)
         var response = ""
         val req = object : JsonObjectRequest(
             Method.POST, url, finalBody,
             {
-                Log.i("inside", "Inside Api Call")
-
                 response = it.getString("jobIdentifier")
-                getStatus(response)
-//                Handler().postDelayed({ getTextOut(response) }, 60000)
-                Log.i("identifier", response)
-                Toast.makeText(requireContext(), "Api Call success", Toast.LENGTH_SHORT).show()
+                Log.i("Video-Captioning-JobId", response)
 
-            }, {
-                Toast.makeText(requireContext(), "Api Call Failed", Toast.LENGTH_SHORT).show()
-                Log.i("status code", it.message.toString())
-            }) {
+//                Calling getStatus to check if job is completed
+                getStatus(response)
+            }
+            ,
+            {
+//                If network call fails
+                Log.i("Video-Captioning API Call Failed", it.message.toString())
+            }
+        )
+        {
+//            Writing the required Headers for API call
             override fun getHeaders(): MutableMap<String, String> {
                 val headerMap = mutableMapOf<String, String>()
                 headerMap["Authorization"] = "ApiKey KSQslWseSzQ3hfcWeC0A.lMIZQC7rTsApVTnDeArW"
@@ -162,26 +158,26 @@ class ThirdFragment : Fragment() {
         queue.add(req)
     }
 
+//    Function to check if job is completed
     private fun getStatus(response: String) {
-        Log.i("insidestatus", "hello")
         var outputText = ""
         val queue2 = Volley.newRequestQueue(viewOfLayout3rd.context)
         val req = object : JsonObjectRequest(
             Method.GET, "https://app.modzy.com/api/jobs/$response", null,
             {
-                Log.i("identifierStatus", "Inside Api Call")
                 outputText = it.getString("status")
+
+//                Checking job status every 10 sec
                 Handler().postDelayed({
                     if (outputText == "COMPLETED")
+//                        sending job id to extract the caption
                         getTextOut(response)
                     else
                         getStatus(response)
                 }, 10000)
 
             }, {
-                Toast.makeText(requireContext(), "Api Call Failed second", Toast.LENGTH_SHORT)
-                    .show()
-                Log.i("status code", it.message.toString())
+                Log.i("Job Status Failed", it.message.toString())
             }) {
             override fun getHeaders(): MutableMap<String, String> {
                 val headerMap = mutableMapOf<String, String>()
@@ -193,27 +189,24 @@ class ThirdFragment : Fragment() {
             }
         }
         queue2.add(req)
-//        getTextOut(response)
     }
 
+//    Extracting the caption from Video-Captioning JobId
     private fun getTextOut(response: String) {
-        Log.i("status", response)
 
         val queue2 = Volley.newRequestQueue(viewOfLayout3rd.context)
         val req = object : JsonObjectRequest(
             Method.GET, "https://app.modzy.com/api/results/$response", null,
             {
-                Log.i("inside", "Inside Api Call")
                 val outputText = (it.getJSONObject("results")).getJSONObject("0001")
                     .getJSONObject("results.json").getString("caption")
+                Log.i("Video Caption", outputText)
+
+//                Sending text to Text Topic Modelling API call for tags generation
                 processText(outputText)
-                Log.i("Text", outputText.toString())
-                Toast.makeText(requireContext(), "Api Call success", Toast.LENGTH_SHORT).show()
 
             }, {
-                Toast.makeText(requireContext(), "Api Call Failed second", Toast.LENGTH_SHORT)
-                    .show()
-                Log.i("status code", it.message.toString())
+                Log.i("Result Extraction failed from Video-Captioning JobId", it.message.toString())
             }) {
             override fun getHeaders(): MutableMap<String, String> {
                 val headerMap = mutableMapOf<String, String>()
@@ -227,20 +220,23 @@ class ThirdFragment : Fragment() {
         queue2.add(req)
     }
 
+//    Sending extracted caption to Text-Topic Modelling API Call for jobId generation
     private fun processText(text: String) {
 
-//        val text =
-//            "API is the acronym for Application Programming Interface, which is a software intermediary that allows two applications to talk to each other. Each time you use an app like Facebook, send an instant message, or check the weather on your phone, you're using an API."
         val url = "https://app.modzy.com/api/jobs"
         val body = JSONObject()
         val body2 = JSONObject()
+
         body2.put("identifier", "m8z2mwe3pt")
         body2.put("version", "0.0.1")
         body.put("model", body2)
+
         val body4 = JSONObject()
         body4.put("input.txt", text)
+
         val body3 = JSONObject()
         body3.put("my-input", body4)
+
         val body5 = JSONObject()
         body5.put("type", "text")
         body5.put("sources", body3)
@@ -248,24 +244,20 @@ class ThirdFragment : Fragment() {
         //final body
         body.put("input", body5)
 
-        Log.i("body", body.toString())
+        Log.i("Request Body", body.toString())
 
-//
+//    Calling Text-Topic Modelling API Call for JobId generation
         val queue = Volley.newRequestQueue(viewOfLayout3rd.context)
         var response = ""
         val req = object : JsonObjectRequest(
             Method.POST, url, body,
             {
-                Log.i("inside", "Inside Api Call")
-
                 response = it.getString("jobIdentifier")
+                Log.i("Text-Topic Modelling JobId", response)
                 Handler().postDelayed({ getTopics(response) }, 3000)
-                Log.i("identifier", response)
-                Toast.makeText(requireContext(), "Api Call success", Toast.LENGTH_SHORT).show()
 
             }, {
-                Toast.makeText(requireContext(), "Api Call Failed", Toast.LENGTH_SHORT).show()
-                Log.i("status code", it.message.toString())
+                Log.i("Text-Topic Modelling Network Call Failed", it.message.toString())
             }) {
             override fun getHeaders(): MutableMap<String, String> {
                 val headerMap = mutableMapOf<String, String>()
@@ -279,6 +271,7 @@ class ThirdFragment : Fragment() {
         queue.add(req)
     }
 
+//    Extracting the topics from Text-Topic Modelling Job-Id
     fun getTopics(response: String) {
         Log.i("status", response)
 
@@ -286,24 +279,26 @@ class ThirdFragment : Fragment() {
         val req = object : JsonObjectRequest(
             Method.GET, "https://app.modzy.com/api/results/$response", null,
             {
-                Log.i("inside", "Inside Api Call")
                 val topics = (it.getJSONObject("results")).getJSONObject("my-input")
                     .getJSONArray("results.json")
                 Log.i("topics", topics.toString())
+
+//                Constructing Tagged Response
                 var output = StringBuilder()
                 for (i in 0 until topics.length())
-                    output.append("#").append(topics[i]).append("\n")
-                Log.i("topics", output.toString())
+                    output.append("#").append(topics[i]).append(" ")
+
+                Log.i("Tagged Response", output.toString())
+
+//                Printing the Tagged Response on Screen
                 viewOfLayout3rd.findViewById<TextView>(R.id.textView2).text = output
+
+//                Copy-to-Clipboard button for ease
                 viewOfLayout3rd.button4.setOnClickListener {
                     copy_to_clipboard(output.toString())
                 }
-                Toast.makeText(requireContext(), "Api Call success", Toast.LENGTH_SHORT).show()
-
             }, {
-                Toast.makeText(requireContext(), "Api Call Failed second", Toast.LENGTH_SHORT)
-                    .show()
-                Log.i("status code", it.message.toString())
+                Log.i("Result Extraction failed from Text-Topic Modelling JobId", it.message.toString())
             }) {
             override fun getHeaders(): MutableMap<String, String> {
                 val headerMap = mutableMapOf<String, String>()
@@ -317,15 +312,14 @@ class ThirdFragment : Fragment() {
         queue2.add(req)
     }
 
+//    Function to copy tagged response to clipboard
     private fun copy_to_clipboard(topics: String) {
-        val textToCopy = topics
-
         val clipboard =
             ContextCompat.getSystemService(
                 requireContext(),
                 ClipboardManager::class.java
             ) as ClipboardManager
-        val clip = ClipData.newPlainText("label", textToCopy)
+        val clip = ClipData.newPlainText("label", topics)
         clipboard!!.setPrimaryClip(clip)
     }
 
