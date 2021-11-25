@@ -124,8 +124,8 @@ class SecondFragment : Fragment() {
 
         val properInput = JSONObject()
         properInput.put("type", "aws-s3")
-        properInput.put("accessKeyID", "AKIATLNIEWDMNMKGF4EF")
-        properInput.put("secretAccessKey", "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")
+        properInput.put("accessKeyID", "AKIATLNIEWDMI6TF65EU")
+        properInput.put("secretAccessKey", "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")
         properInput.put("region", "us-east-2")
         properInput.put("sources", sourcesBody)
 
@@ -138,7 +138,8 @@ class SecondFragment : Fragment() {
             Method.POST, url, finalBody,
             {
                 response = it.getString("jobIdentifier")
-                Handler().postDelayed({ getTextOut(response) }, 8000)
+//                Handler().postDelayed({ getTextOut(response) }, 8000)
+                getStatus(response)
                 Log.i("identifier", response)
                 Toast.makeText(requireContext(), "Api Call success", Toast.LENGTH_SHORT).show()
 
@@ -156,6 +157,39 @@ class SecondFragment : Fragment() {
             }
         }
         queue.add(req)
+    }
+
+    //    Function to check if job is completed
+    private fun getStatus(response: String) {
+        var outputText = ""
+        val queue2 = Volley.newRequestQueue(viewOfLayout2nd.context)
+        val req = object : JsonObjectRequest(
+            Method.GET, "https://app.modzy.com/api/jobs/$response", null,
+            {
+                outputText = it.getString("status")
+
+//                Checking job status every 2 sec
+                Handler().postDelayed({
+                    if (outputText == "COMPLETED")
+//                        sending job id to extract the caption
+                        getTextOut(response)
+                    else
+                        getStatus(response)
+                }, 2000)
+
+            }, {
+                Log.i("Job Status Failed", it.message.toString())
+            }) {
+            override fun getHeaders(): MutableMap<String, String> {
+                val headerMap = mutableMapOf<String, String>()
+                headerMap["Authorization"] = "ApiKey KSQslWseSzQ3hfcWeC0A.lMIZQC7rTsApVTnDeArW"
+                headerMap["Content-Type"] = "application/json"
+                headerMap["Accept"] = "application/json"
+                headerMap["User-Agent"] = "PostmanRuntime/7.28.4"
+                return headerMap
+            }
+        }
+        queue2.add(req)
     }
 
     //getting the text of the image
