@@ -12,7 +12,7 @@
         android:id="@+id/TextInput"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="240dp"
         android:layout_marginTop="25dp"
         android:layout_marginBottom="20dp"
         app:boxBackgroundColor="#060C34"
@@ -29,7 +29,7 @@
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/TextInputEditText"
             android:layout_width="match_parent"
-            android:layout_height="240dp"
+            android:layout_height="match_parent"
             android:fontFamily="serif"
             android:hint="Input"
             tools:ignore="SpeakableTextPresentCheck" />
