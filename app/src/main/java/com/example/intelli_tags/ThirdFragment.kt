@@ -45,6 +45,7 @@ import java.lang.StringBuilder
 class ThirdFragment : Fragment() {
     private lateinit var viewOfLayout3rd: View
     lateinit var accessToken: String
+    lateinit var filepath: String
     lateinit var progressBar: ProgressBar
     private var videoUri: Uri? = null
     lateinit var ai: ApplicationInfo
@@ -104,20 +105,14 @@ class ThirdFragment : Fragment() {
         val body = JSONObject()
         body.put("url", "https://modzybucket35738-dev.s3.us-east-2.amazonaws.com/public/Video.mp4")
         body.put("name", "General")
-
         val queue = Volley.newRequestQueue(viewOfLayout3rd.context)
-//        var response=JSONArray()
-//        var ans=StringBuilder()
         val req = object : JsonObjectRequest(
             Method.POST, url, body,
             {
                 val response = it.getString("conversationId")
                 Log.i("Conversation_id", response)
+//                Webhook to be implemented
                 Handler().postDelayed({ getMessage(response) }, 30000)
-//                Log.i("Video-Captioning-JobId", ans.toString())
-//                processText(ans.toString() )
-//                Calling getStatus to check if job is completed
-//                getStatus(response)
             },
             {
 //                If network call fails
@@ -127,11 +122,7 @@ class ThirdFragment : Fragment() {
             //            Writing the required Headers for API call
             override fun getHeaders(): MutableMap<String, String> {
                 val headerMap = mutableMapOf<String, String>()
-//                headerMap["Authorization"] = "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IlFVUTRNemhDUVVWQk1rTkJNemszUTBNMlFVVTRRekkyUmpWQ056VTJRelUxUTBVeE5EZzFNUSJ9.eyJodHRwczovL3BsYXRmb3JtLnN5bWJsLmFpL3VzZXJJZCI6IjYzNzcyOTEwMjMxMjI0MzIiLCJpc3MiOiJodHRwczovL2RpcmVjdC1wbGF0Zm9ybS5hdXRoMC5jb20vIiwic3ViIjoicG9lcGNQV3Z1dHZFd2Q0TXQ0Z0VTZExTdHpNV1d5UVZAY2xpZW50cyIsImF1ZCI6Imh0dHBzOi8vcGxhdGZvcm0ucmFtbWVyLmFpIiwiaWF0IjoxNjM3OTA1OTc1LCJleHAiOjE2Mzc5OTIzNzUsImF6cCI6InBvZXBjUFd2dXR2RXdkNE10NGdFU2RMU3R6TVdXeVFWIiwiZ3R5IjoiY2xpZW50LWNyZWRlbnRpYWxzIn0.0jl7QY628ofEDaWSurRO2Us_CQjw4hE6R4C4fxUxfvL6akkHNWMaZZQSfW3XTrtdQxoK6Fe_CMspqpHINyrDUFOYzKAQ0BfwlsfxyB4Cenw20jmuLHyQkfjMQx2FgoSpqtS1Ok0To9JHqNKD4YJ6vLy9TRw5w-p_NSD_ThXg6FXCRSy5oUlOVoSKpZGBYiBDDCrNDDC6pYgAxZwj0XzLTE7FOUAL_Tku6wlHT0HzTHIAP3Qnu35RF7VSeHgMF1SwP0zlLd5CObE8Oh-PMOSjuVpvm2Vfx4a_i5buxMKR98bIfm6f8L5C3Cu13i4bKas9mQ417eDBP3REJ3Y3z4optQ"
                 headerMap["Authorization"] = "Bearer $accessToken"
-//                headerMap["Content-Type"] = "application/json"
-//                headerMap["Accept"] = "application/json"
-//                headerMap["User-Agent"] = "PostmanRuntime/7.28.4"
                 return headerMap
             }
         }
@@ -166,7 +157,9 @@ class ThirdFragment : Fragment() {
                 }
             }
             Log.i("Video Uri", videoUri.toString())
-
+            val uriPathHelper = URIPathHelper()
+            filepath= uriPathHelper.getPath(viewOfLayout3rd.context,videoUri).toString()
+            Log.i("path",filepath.toString())
 //            Calling this function to upload video to AWS
             uploadVideoToS3(videoUri)
         }
@@ -175,14 +168,13 @@ class ThirdFragment : Fragment() {
     //    Function to upload the selected video to AWS
     private fun uploadVideoToS3(videoUri: Uri?) {
         val stream = videoUri?.let { requireContext().contentResolver.openInputStream(it) }
-        val options =
-            StorageUploadInputStreamOptions.builder().accessLevel(StorageAccessLevel.PUBLIC)
+        val options = StorageUploadInputStreamOptions.builder().accessLevel(StorageAccessLevel.PUBLIC)
                 .build()
 //    if video uri is not null then uploading the video
         if (stream != null) {
             Amplify.Storage.uploadInputStream("Video.mp4", stream, options, {
                 Log.i("MyAmplifyApp", "Successfully uploaded: ${it.key}")
-                getConversationId()
+                sendAppId()
 //                Amplify.Storage.getUrl("public/Video.mp4",
 //                    {
 //                        Log.i("Object Url", "${it.url}")
