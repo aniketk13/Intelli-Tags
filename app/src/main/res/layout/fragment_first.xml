@@ -68,6 +68,7 @@
         android:id="@+id/searchTags"
         android:layout_width="63dp"
         android:layout_height="63dp"
+        android:background="@drawable/roundimagebuttons"
         android:layout_marginTop="35dp"
         android:layout_marginEnd="2dp"
         android:src="?android:attr/actionModeWebSearchDrawable"
@@ -77,12 +78,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/resultTopics"
         app:layout_constraintVertical_bias="0.01999998"
-        tools:ignore="SpeakableTextPresentCheck" />
+        tools:ignore="SpeakableTextPresentCheck"
+        app:tint="@color/white" />
 
     <ImageButton
         android:id="@+id/copyButton"
         android:layout_width="63dp"
         android:layout_height="63dp"
+        android:background="@drawable/roundimagebuttons"
         android:layout_marginTop="35dp"
         android:layout_marginEnd="5dp"
         android:src="?attr/actionModeCopyDrawable"
@@ -99,6 +102,7 @@
         android:layout_width="63dp"
         android:layout_height="63dp"
         android:layout_marginStart="40dp"
+        android:background="@drawable/roundimagebuttons"
         android:layout_marginTop="35dp"
         android:src="?attr/actionModeShareDrawable"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -107,7 +111,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/resultTopics"
         app:layout_constraintVertical_bias="0.0"
-        tools:ignore="SpeakableTextPresentCheck" />
+        tools:ignore="SpeakableTextPresentCheck"
+        app:tint="@color/white" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
