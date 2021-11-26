@@ -17,10 +17,10 @@ import kotlinx.android.synthetic.main.fragment_first.view.*
 import org.json.JSONObject
 import java.lang.StringBuilder
 import android.content.ClipData
+import android.content.Intent
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.widget.ProgressBar
-import kotlinx.android.synthetic.main.fragment_first.*
 
 class FirstFragment : Fragment(R.layout.fragment_first) {
 
@@ -36,16 +36,29 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
         viewOfLayout = inflater.inflate(R.layout.fragment_first, container, false)
         ai = viewOfLayout.context.packageManager
             .getApplicationInfo(viewOfLayout.context.packageName, PackageManager.GET_META_DATA)
-        progressBar=viewOfLayout.findViewById(R.id.progressBar)
+        progressBar = viewOfLayout.findViewById(R.id.progressBar)
         progressBar.visibility = View.GONE
-        viewOfLayout.button.setOnClickListener {
+        viewOfLayout.searchTags.setOnClickListener {
             val text = viewOfLayout.TextInputEditText.text.toString()
             //prgress bar
 //            progressBar = viewOfLayout.findViewById(R.id.progressBar)
             progressBar.visibility = View.VISIBLE
             processText(text)
         }
+
         return viewOfLayout
+    }
+
+    //share button implementation
+    private fun shareText(topicsToShare: String) {
+        val intent = Intent(Intent.ACTION_SEND)
+        intent.type = "text/plain"
+        intent.putExtra(
+            Intent.EXTRA_TEXT,
+            "Topics are:\n$topicsToShare"
+        )
+        val chooser = Intent.createChooser(intent, "Share Via")
+        startActivity(chooser)
     }
 
     //function to copy the text to clipboard
@@ -118,12 +131,11 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
 
 //                Checking job status every 10 sec
                 Handler().postDelayed({
-                    if (outputText == "COMPLETED")
-                    {
+                    if (outputText == "COMPLETED") {
 
 //                        sending job id to extract the caption
-                        getTopics(response)}
-                    else
+                        getTopics(response)
+                    } else
                         getStatus(response)
                 }, 500)
 
@@ -160,9 +172,14 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
                 progressBar.visibility = View.GONE
                 Log.i("topics", output.toString())
                 viewOfLayout.findViewById<TextView>(R.id.resultTopics).text = output
-                viewOfLayout.copy.setOnClickListener {
+                viewOfLayout.copyButton.setOnClickListener {
                     copy_to_clipboard(output.toString())
                 }
+
+                viewOfLayout.shareButton.setOnClickListener {
+                    shareText(output.toString())
+                }
+
                 Toast.makeText(requireContext(), "Api Call success", Toast.LENGTH_SHORT).show()
 
             }, {

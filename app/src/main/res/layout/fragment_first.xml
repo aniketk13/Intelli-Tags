@@ -4,6 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="7dp"
+    android:paddingTop="10dp"
     tools:context=".FirstFragment">
 
     <com.google.android.material.textfield.TextInputLayout
@@ -11,51 +13,44 @@
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="180dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginBottom="20dp"
+        app:boxBackgroundColor="#060C34"
+        app:boxCornerRadiusBottomEnd="50dp"
+        app:boxCornerRadiusBottomStart="50dp"
+        app:boxCornerRadiusTopEnd="7dp"
+        app:boxCornerRadiusTopStart="50dp"
+        app:layout_constraintBottom_toTopOf="@+id/resultTopics"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/TextInputEditText"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="240dp"
+            android:fontFamily="serif"
+            android:hint="Input"
             tools:ignore="SpeakableTextPresentCheck" />
-
     </com.google.android.material.textfield.TextInputLayout>
-
-    <Button
-        android:id="@+id/button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="28dp"
-        android:text="Button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/TextInput" />
 
     <TextView
         android:id="@+id/resultTopics"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="2dp"
-        android:text="TextView"
+        android:layout_width="match_parent"
+        android:layout_height="240dp"
+        android:layout_marginTop="35dp"
+        android:layout_marginBottom="150dp"
+        android:background="@drawable/roundcorners"
+        android:fontFamily="@font/inter"
+        android:textAlignment="center"
+        android:textColor="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_bias="0.538"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button" />
-
-    <Button
-        android:id="@+id/copy"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Button"
-        app:layout_constraintBottom_toBottomOf="@+id/resultTopics"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/resultTopics"
-        app:layout_constraintTop_toTopOf="@+id/resultTopics" />
+        app:layout_constraintTop_toBottomOf="@+id/TextInput"
+        tools:text="Your Tags!" />
 
     <ProgressBar
         android:id="@+id/progressBar"
@@ -64,9 +59,52 @@
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_bias="0.446"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.631" />
+
+    <ImageButton
+        android:id="@+id/searchTags"
+        android:layout_width="63dp"
+        android:layout_height="63dp"
+        android:layout_marginTop="35dp"
+        android:layout_marginEnd="2dp"
+        android:src="?android:attr/actionModeWebSearchDrawable"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.893"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/resultTopics"
+        app:layout_constraintVertical_bias="0.01999998" />
+
+    <ImageButton
+        android:id="@+id/copyButton"
+        android:layout_width="63dp"
+        android:layout_height="63dp"
+        android:layout_marginTop="35dp"
+        android:layout_marginEnd="5dp"
+        android:src="?attr/actionModeCopyDrawable"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/searchTags"
+        app:layout_constraintHorizontal_bias="0.744"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/resultTopics"
+        app:layout_constraintVertical_bias="0.014" />
+
+    <ImageButton
+        android:id="@+id/shareButton"
+        android:layout_width="63dp"
+        android:layout_height="63dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="35dp"
+        android:src="?attr/actionModeShareDrawable"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/copyButton"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/resultTopics"
+        app:layout_constraintVertical_bias="0.0" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

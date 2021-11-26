@@ -11,6 +11,7 @@ import android.database.Cursor
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.provider.MediaStore
 import android.provider.OpenableColumns
 import android.util.Log
@@ -110,9 +111,12 @@ class ThirdFragment : Fragment() {
             Method.POST, url, body,
             {
                 val response = it.getString("conversationId")
+                val jobId = it.getString("jobId")
                 Log.i("Conversation_id", response)
 //                Webhook to be implemented
-                Handler().postDelayed({ getMessage(response) }, 30000)
+
+                getStatusSymblResponse(jobId, response)
+//                Handler().postDelayed({ getMessage(response) }, 30000)
             },
             {
 //                If network call fails
@@ -127,6 +131,33 @@ class ThirdFragment : Fragment() {
             }
         }
         queue.add(req)
+    }
+
+    //webhook implemented for Symbl.ai
+    private fun getStatusSymblResponse(jobId: String, response: String) {
+        val endPt = "https://api.symbl.ai/v1/job/$jobId"
+        val queue = Volley.newRequestQueue(viewOfLayout3rd.context)
+        val request = object : JsonObjectRequest(
+            Method.GET, endPt, null, {
+                val status = it.getString("status")
+                if (status == "completed") {
+                    Handler().postDelayed({ getMessage(response) }, 30000)
+                } else {
+                    val handler = Handler(Looper.getMainLooper())
+                    Handler().postDelayed({
+                        getStatusSymblResponse(jobId, response)
+                    }, 500)
+                }
+            }, {
+                Toast.makeText(viewOfLayout3rd.context, "Error", Toast.LENGTH_SHORT).show()
+            }) {
+            override fun getHeaders(): MutableMap<String, String> {
+                val headers = HashMap<String, String>()
+                headers.put("Authorization", "Bearer $accessToken")
+                return headers
+            }
+        }
+        queue.add(request)
     }
 
     //    Gallery launch function to select a video file
@@ -152,14 +183,15 @@ class ThirdFragment : Fragment() {
                 Log.i(ContentValues.TAG, "error: ", e)
                 //handle the failure cases here
             } finally {
-                if (returnCursor != null) {
-                    returnCursor.close()
-                }
+                returnCursor?.close()
+//                if (returnCursor != null) {
+//                    returnCursor.close()
+//                }
             }
             Log.i("Video Uri", videoUri.toString())
             val uriPathHelper = URIPathHelper()
-            filepath= uriPathHelper.getPath(viewOfLayout3rd.context,videoUri).toString()
-            Log.i("path",filepath.toString())
+            filepath = uriPathHelper.getPath(viewOfLayout3rd.context, videoUri).toString()
+            Log.i("path", filepath.toString())
 //            Calling this function to upload video to AWS
             uploadVideoToS3(videoUri)
         }
@@ -168,7 +200,8 @@ class ThirdFragment : Fragment() {
     //    Function to upload the selected video to AWS
     private fun uploadVideoToS3(videoUri: Uri?) {
         val stream = videoUri?.let { requireContext().contentResolver.openInputStream(it) }
-        val options = StorageUploadInputStreamOptions.builder().accessLevel(StorageAccessLevel.PUBLIC)
+        val options =
+            StorageUploadInputStreamOptions.builder().accessLevel(StorageAccessLevel.PUBLIC)
                 .build()
 //    if video uri is not null then uploading the video
         if (stream != null) {
