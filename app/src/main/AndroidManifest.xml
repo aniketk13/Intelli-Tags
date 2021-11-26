@@ -22,6 +22,29 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <meta-data
+            android:name="Symbl_Token"
+            android:value="${Symbl_Access_Token}"
+            />
+        <meta-data
+            android:name="SymblAppId"
+            android:value="${Symbl_App_ID}"
+            />
+        <meta-data
+            android:name="SymblAppSecret"
+            android:value="${Symbl_App_Secret}"
+            />
+        <meta-data
+            android:name="ModzyAPIKey"
+            android:value="${Modzy_API_Key}"
+            />
+        <meta-data
+            android:name="AWSAccessId"
+            android:value="${AWS_Access_ID}"
+            /><meta-data
+            android:name="AWSSecretKey"
+            android:value="${AWS_Secret_Access_Key}"
+            />
     </application>
 
 </manifest>

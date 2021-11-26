@@ -17,6 +17,8 @@ import kotlinx.android.synthetic.main.fragment_first.view.*
 import org.json.JSONObject
 import java.lang.StringBuilder
 import android.content.ClipData
+import android.content.pm.ApplicationInfo
+import android.content.pm.PackageManager
 import android.widget.ProgressBar
 import kotlinx.android.synthetic.main.fragment_first.*
 
@@ -24,12 +26,16 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
 
     lateinit var viewOfLayout: View
     lateinit var progressBar: ProgressBar
+    lateinit var ai: ApplicationInfo
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         viewOfLayout = inflater.inflate(R.layout.fragment_first, container, false)
+        ai = viewOfLayout.context.packageManager
+            .getApplicationInfo(viewOfLayout.context.packageName, PackageManager.GET_META_DATA)
         progressBar=viewOfLayout.findViewById(R.id.progressBar)
         progressBar.visibility = View.GONE
         viewOfLayout.button.setOnClickListener {
@@ -91,7 +97,7 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
             }) {
             override fun getHeaders(): MutableMap<String, String> {
                 val headerMap = mutableMapOf<String, String>()
-                headerMap["Authorization"] = "ApiKey KSQslWseSzQ3hfcWeC0A.lMIZQC7rTsApVTnDeArW"
+                headerMap["Authorization"] = "ApiKey ${ai.metaData["ModzyAPIKey"]}"
                 headerMap["Content-Type"] = "application/json"
                 headerMap["Accept"] = "application/json"
                 headerMap["User-Agent"] = "PostmanRuntime/7.28.4"
@@ -126,7 +132,7 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
             }) {
             override fun getHeaders(): MutableMap<String, String> {
                 val headerMap = mutableMapOf<String, String>()
-                headerMap["Authorization"] = "ApiKey KSQslWseSzQ3hfcWeC0A.lMIZQC7rTsApVTnDeArW"
+                headerMap["Authorization"] = "ApiKey ${ai.metaData["ModzyAPIKey"]}"
                 headerMap["Content-Type"] = "application/json"
                 headerMap["Accept"] = "application/json"
                 headerMap["User-Agent"] = "PostmanRuntime/7.28.4"
@@ -166,7 +172,7 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
             }) {
             override fun getHeaders(): MutableMap<String, String> {
                 val headerMap = mutableMapOf<String, String>()
-                headerMap["Authorization"] = "ApiKey KSQslWseSzQ3hfcWeC0A.lMIZQC7rTsApVTnDeArW"
+                headerMap["Authorization"] = "ApiKey ${ai.metaData["ModzyAPIKey"]}"
                 headerMap["Content-Type"] = "application/json"
                 headerMap["Accept"] = "application/json"
                 headerMap["User-Agent"] = "PostmanRuntime/7.28.4"

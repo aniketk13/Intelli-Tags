@@ -13,6 +13,8 @@ import android.app.Activity.RESULT_OK
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.ContentValues
+import android.content.pm.ApplicationInfo
+import android.content.pm.PackageManager
 import android.database.Cursor
 import android.net.Uri
 import android.os.Handler
@@ -36,6 +38,7 @@ class SecondFragment : Fragment() {
 
     private lateinit var viewOfLayout2nd: View
     lateinit var progressBar: ProgressBar
+    lateinit var ai: ApplicationInfo
     lateinit var exampleFile: File
     private var imageUri: Uri? = null
     override fun onCreateView(
@@ -44,6 +47,8 @@ class SecondFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         viewOfLayout2nd = inflater.inflate(R.layout.fragment_second, container, false)
+        ai = viewOfLayout2nd.context.packageManager
+            .getApplicationInfo(viewOfLayout2nd.context.packageName, PackageManager.GET_META_DATA)
         progressBar=viewOfLayout2nd.findViewById(R.id.progressBar2nd)
         progressBar.visibility = View.GONE
 
@@ -149,8 +154,8 @@ class SecondFragment : Fragment() {
 
         val properInput = JSONObject()
         properInput.put("type", "aws-s3")
-        properInput.put("accessKeyID", "AKIATLNIEWDMI6TF65EU")
-        properInput.put("secretAccessKey", "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")
+        properInput.put("accessKeyID", "${ai.metaData["AWSAccessId"]}")
+        properInput.put("secretAccessKey", "${ai.metaData["AWSSecretKey"]}")
         properInput.put("region", "us-east-2")
         properInput.put("sources", sourcesBody)
 
@@ -174,7 +179,7 @@ class SecondFragment : Fragment() {
             }) {
             override fun getHeaders(): MutableMap<String, String> {
                 val headerMap = mutableMapOf<String, String>()
-                headerMap["Authorization"] = "ApiKey KSQslWseSzQ3hfcWeC0A.lMIZQC7rTsApVTnDeArW"
+                headerMap["Authorization"] = "ApiKey ${ai.metaData["ModzyAPIKey"]}"
                 headerMap["Content-Type"] = "application/json"
                 headerMap["Accept"] = "application/json"
                 headerMap["User-Agent"] = "PostmanRuntime/7.28.4"
@@ -207,7 +212,7 @@ class SecondFragment : Fragment() {
             }) {
             override fun getHeaders(): MutableMap<String, String> {
                 val headerMap = mutableMapOf<String, String>()
-                headerMap["Authorization"] = "ApiKey KSQslWseSzQ3hfcWeC0A.lMIZQC7rTsApVTnDeArW"
+                headerMap["Authorization"] = "ApiKey ${ai.metaData["ModzyAPIKey"]}"
                 headerMap["Content-Type"] = "application/json"
                 headerMap["Accept"] = "application/json"
                 headerMap["User-Agent"] = "PostmanRuntime/7.28.4"
@@ -237,7 +242,7 @@ class SecondFragment : Fragment() {
             }) {
             override fun getHeaders(): MutableMap<String, String> {
                 val headerMap = mutableMapOf<String, String>()
-                headerMap["Authorization"] = "ApiKey KSQslWseSzQ3hfcWeC0A.lMIZQC7rTsApVTnDeArW"
+                headerMap["Authorization"] = "ApiKey ${ai.metaData["ModzyAPIKey"]}"
                 headerMap["Content-Type"] = "application/json"
                 headerMap["Accept"] = "application/json"
                 headerMap["User-Agent"] = "PostmanRuntime/7.28.4"
@@ -285,7 +290,7 @@ class SecondFragment : Fragment() {
             }) {
             override fun getHeaders(): MutableMap<String, String> {
                 val headerMap = mutableMapOf<String, String>()
-                headerMap["Authorization"] = "ApiKey KSQslWseSzQ3hfcWeC0A.lMIZQC7rTsApVTnDeArW"
+                headerMap["Authorization"] = "ApiKey ${ai.metaData["ModzyAPIKey"]}"
                 headerMap["Content-Type"] = "application/json"
                 headerMap["Accept"] = "application/json"
                 headerMap["User-Agent"] = "PostmanRuntime/7.28.4"
@@ -318,7 +323,7 @@ class SecondFragment : Fragment() {
             }) {
             override fun getHeaders(): MutableMap<String, String> {
                 val headerMap = mutableMapOf<String, String>()
-                headerMap["Authorization"] = "ApiKey KSQslWseSzQ3hfcWeC0A.lMIZQC7rTsApVTnDeArW"
+                headerMap["Authorization"] = "ApiKey ${ai.metaData["ModzyAPIKey"]}"
                 headerMap["Content-Type"] = "application/json"
                 headerMap["Accept"] = "application/json"
                 headerMap["User-Agent"] = "PostmanRuntime/7.28.4"
@@ -356,7 +361,7 @@ class SecondFragment : Fragment() {
             }) {
             override fun getHeaders(): MutableMap<String, String> {
                 val headerMap = mutableMapOf<String, String>()
-                headerMap["Authorization"] = "ApiKey KSQslWseSzQ3hfcWeC0A.lMIZQC7rTsApVTnDeArW"
+                headerMap["Authorization"] = "ApiKey ${ai.metaData["ModzyAPIKey"]}"
                 headerMap["Content-Type"] = "application/json"
                 headerMap["Accept"] = "application/json"
                 headerMap["User-Agent"] = "PostmanRuntime/7.28.4"
