@@ -20,6 +20,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import com.amplifyframework.AmplifyException
 import com.amplifyframework.auth.cognito.AWSCognitoAuthPlugin
@@ -28,6 +29,7 @@ import com.amplifyframework.storage.StorageAccessLevel
 import com.amplifyframework.storage.options.StorageUploadFileOptions
 import com.amplifyframework.storage.options.StorageUploadInputStreamOptions
 import com.amplifyframework.storage.s3.AWSS3StoragePlugin
+import com.android.volley.Request
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import kotlinx.android.synthetic.main.fragment_third.view.*
@@ -42,6 +44,7 @@ import java.lang.StringBuilder
 
 class ThirdFragment : Fragment() {
     private lateinit var viewOfLayout3rd: View
+    lateinit var accessToken: String
     lateinit var progressBar: ProgressBar
     private var videoUri: Uri? = null
     lateinit var ai: ApplicationInfo
@@ -68,9 +71,32 @@ class ThirdFragment : Fragment() {
 //        checking if upload button is clicked to launch gallery
         viewOfLayout3rd.button2.setOnClickListener {
 //            launchGallery()
-            getConversationId()
+            progressBar.visibility = View.VISIBLE
+            sendAppId()
         }
         return viewOfLayout3rd
+    }
+
+    private fun sendAppId() {
+        val parameters = JSONObject()
+        parameters.put("type", "application")
+        parameters.put("appId", "${ai.metaData["SymblAppId"]}")
+        parameters.put(
+            "appSecret",
+            "${ai.metaData["SymblAppSecret"]}"
+        )
+
+        val queue = Volley.newRequestQueue(viewOfLayout3rd.context)
+        val req = JsonObjectRequest(
+            Request.Method.POST, "https://api.symbl.ai/oauth2/token:generate", parameters,
+            {
+                accessToken = it.getString("accessToken")
+                getConversationId()
+
+            }, {
+                Toast.makeText(viewOfLayout3rd.context, "Error", Toast.LENGTH_SHORT).show()
+            })
+        queue.add(req)
     }
 
     private fun getConversationId() {
@@ -87,7 +113,7 @@ class ThirdFragment : Fragment() {
             {
                 val response = it.getString("conversationId")
                 Log.i("Conversation_id", response)
-                Handler().postDelayed({ getMessage(response) }, 20000)
+                Handler().postDelayed({ getMessage(response) }, 30000)
 //                Log.i("Video-Captioning-JobId", ans.toString())
 //                processText(ans.toString() )
 //                Calling getStatus to check if job is completed
@@ -102,7 +128,7 @@ class ThirdFragment : Fragment() {
             override fun getHeaders(): MutableMap<String, String> {
                 val headerMap = mutableMapOf<String, String>()
 //                headerMap["Authorization"] = "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IlFVUTRNemhDUVVWQk1rTkJNemszUTBNMlFVVTRRekkyUmpWQ056VTJRelUxUTBVeE5EZzFNUSJ9.eyJodHRwczovL3BsYXRmb3JtLnN5bWJsLmFpL3VzZXJJZCI6IjYzNzcyOTEwMjMxMjI0MzIiLCJpc3MiOiJodHRwczovL2RpcmVjdC1wbGF0Zm9ybS5hdXRoMC5jb20vIiwic3ViIjoicG9lcGNQV3Z1dHZFd2Q0TXQ0Z0VTZExTdHpNV1d5UVZAY2xpZW50cyIsImF1ZCI6Imh0dHBzOi8vcGxhdGZvcm0ucmFtbWVyLmFpIiwiaWF0IjoxNjM3OTA1OTc1LCJleHAiOjE2Mzc5OTIzNzUsImF6cCI6InBvZXBjUFd2dXR2RXdkNE10NGdFU2RMU3R6TVdXeVFWIiwiZ3R5IjoiY2xpZW50LWNyZWRlbnRpYWxzIn0.0jl7QY628ofEDaWSurRO2Us_CQjw4hE6R4C4fxUxfvL6akkHNWMaZZQSfW3XTrtdQxoK6Fe_CMspqpHINyrDUFOYzKAQ0BfwlsfxyB4Cenw20jmuLHyQkfjMQx2FgoSpqtS1Ok0To9JHqNKD4YJ6vLy9TRw5w-p_NSD_ThXg6FXCRSy5oUlOVoSKpZGBYiBDDCrNDDC6pYgAxZwj0XzLTE7FOUAL_Tku6wlHT0HzTHIAP3Qnu35RF7VSeHgMF1SwP0zlLd5CObE8Oh-PMOSjuVpvm2Vfx4a_i5buxMKR98bIfm6f8L5C3Cu13i4bKas9mQ417eDBP3REJ3Y3z4optQ"
-                headerMap["Authorization"] = "Bearer ${ai.metaData["Symbl_Token"]}"
+                headerMap["Authorization"] = "Bearer $accessToken"
 //                headerMap["Content-Type"] = "application/json"
 //                headerMap["Accept"] = "application/json"
 //                headerMap["User-Agent"] = "PostmanRuntime/7.28.4"
@@ -202,7 +228,7 @@ class ThirdFragment : Fragment() {
             //            Writing the required Headers for API call
             override fun getHeaders(): MutableMap<String, String> {
                 val headerMap = mutableMapOf<String, String>()
-                headerMap["Authorization"] = "Bearer ${ai.metaData["Symbl_Token"]}"
+                headerMap["Authorization"] = "Bearer $accessToken"
 //                headerMap["Content-Type"] = "application/json"
 //                headerMap["Accept"] = "application/json"
 //                headerMap["User-Agent"] = "PostmanRuntime/7.28.4"
