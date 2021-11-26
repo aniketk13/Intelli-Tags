@@ -52,15 +52,6 @@ class SecondFragment : Fragment() {
         progressBar=viewOfLayout2nd.findViewById(R.id.progressBar2nd)
         progressBar.visibility = View.GONE
 
-        try {
-            Amplify.addPlugin(AWSCognitoAuthPlugin())
-            Amplify.addPlugin(AWSS3StoragePlugin())
-            Amplify.configure(requireContext())
-            Log.i("MyAmplifyApp", "Initialized Amplify")
-            uploadFile()
-        } catch (error: AmplifyException) {
-            Log.e("MyAmplifyApp", "Could not initialize Amplify", error)
-        }
         viewOfLayout2nd.getFiles.setOnClickListener {
             Log.i("hello", "hello")
             launchGallery()

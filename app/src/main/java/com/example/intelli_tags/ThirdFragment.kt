@@ -60,15 +60,6 @@ class ThirdFragment : Fragment() {
             .getApplicationInfo(viewOfLayout3rd.context.packageName, PackageManager.GET_META_DATA)
         progressBar = viewOfLayout3rd.findViewById(R.id.progressBar3rd)
         progressBar.visibility = View.GONE
-        try {
-//            Amplify startup
-            Amplify.addPlugin(AWSCognitoAuthPlugin())
-            Amplify.addPlugin(AWSS3StoragePlugin())
-            Amplify.configure(requireContext())
-            Log.i("MyAmplifyApp", "Initialized Amplify")
-        } catch (error: AmplifyException) {
-            Log.e("MyAmplifyApp", "Could not initialize Amplify", error)
-        }
 
 //        checking if upload button is clicked to launch gallery
         viewOfLayout3rd.button2.setOnClickListener {
