@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:padding="7dp"
     android:paddingTop="10dp"
-    tools:context=".FirstFragment">
+    tools:context=".SecondFragment">
 
     <TextView
         android:id="@+id/textView2nd"
