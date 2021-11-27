@@ -38,6 +38,7 @@ class SecondFragment : Fragment() {
 
     private lateinit var viewOfLayout2nd: View
     lateinit var progressBar: ProgressBar
+    lateinit var filepath1: String
     lateinit var ai: ApplicationInfo
     lateinit var exampleFile: File
     private var imageUri: Uri? = null
@@ -49,7 +50,7 @@ class SecondFragment : Fragment() {
         viewOfLayout2nd = inflater.inflate(R.layout.fragment_second, container, false)
         ai = viewOfLayout2nd.context.packageManager
             .getApplicationInfo(viewOfLayout2nd.context.packageName, PackageManager.GET_META_DATA)
-        progressBar=viewOfLayout2nd.findViewById(R.id.progressBar2nd)
+        progressBar = viewOfLayout2nd.findViewById(R.id.progressBar2nd)
         progressBar.visibility = View.GONE
 
         viewOfLayout2nd.getFiles.setOnClickListener {
@@ -98,6 +99,13 @@ class SecondFragment : Fragment() {
                 }
             }
             Log.i("Image URI", imageUri.toString())
+
+            //getting the file path
+            val uriPathHelper = URIPathHelper()
+            filepath1 = uriPathHelper.getPath(viewOfLayout2nd.context, imageUri).toString()
+            Log.i("path", filepath1.toString())
+
+            viewOfLayout2nd.textViewImageName.text = filepath1
             uploadPhotoToS3(imageUri)
         }
     }
@@ -339,9 +347,13 @@ class SecondFragment : Fragment() {
                 Log.i("topics", output.toString())
                 //progress bar stops
                 progressBar.visibility = View.GONE
-                viewOfLayout2nd.findViewById<TextView>(R.id.textView).text = output
-                viewOfLayout2nd.button3.setOnClickListener {
+                viewOfLayout2nd.findViewById<TextView>(R.id.textView2nd).text = output
+                viewOfLayout2nd.copyButton2nd.setOnClickListener {
                     copy_to_clipboard(output.toString())
+                }
+
+                viewOfLayout2nd.shareButton2nd.setOnClickListener {
+                    shareText(output.toString())
                 }
                 Toast.makeText(requireContext(), "Api Call success", Toast.LENGTH_SHORT).show()
 
@@ -360,6 +372,17 @@ class SecondFragment : Fragment() {
             }
         }
         queue2.add(req)
+    }
+
+    private fun shareText(topicsToShare: String) {
+        val intent = Intent(Intent.ACTION_SEND)
+        intent.type = "text/plain"
+        intent.putExtra(
+            Intent.EXTRA_TEXT,
+            "Tags are:\n$topicsToShare"
+        )
+        val chooser = Intent.createChooser(intent, "Share Via")
+        startActivity(chooser)
     }
 
     //function to copy the text to the clipboard

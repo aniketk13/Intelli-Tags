@@ -55,7 +55,7 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
         intent.type = "text/plain"
         intent.putExtra(
             Intent.EXTRA_TEXT,
-            "Topics are:\n$topicsToShare"
+            "Tags are:\n$topicsToShare"
         )
         val chooser = Intent.createChooser(intent, "Share Via")
         startActivity(chooser)
