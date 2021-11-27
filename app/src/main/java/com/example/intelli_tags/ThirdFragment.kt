@@ -33,15 +33,12 @@ import com.amplifyframework.storage.s3.AWSS3StoragePlugin
 import com.android.volley.Request
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
+import kotlinx.android.synthetic.main.fragment_second.view.*
 import kotlinx.android.synthetic.main.fragment_third.view.*
 import org.json.JSONArray
 import org.json.JSONObject
 import java.lang.Exception
 import java.lang.StringBuilder
-
-/**
- * A simple [Fragment] subclass.
- */
 
 class ThirdFragment : Fragment() {
     private lateinit var viewOfLayout3rd: View
@@ -62,7 +59,7 @@ class ThirdFragment : Fragment() {
         progressBar.visibility = View.GONE
 
 //        checking if upload button is clicked to launch gallery
-        viewOfLayout3rd.button2.setOnClickListener {
+        viewOfLayout3rd.getFiles3rd.setOnClickListener {
 //            launchGallery()
             progressBar.visibility = View.VISIBLE
             sendAppId()
@@ -360,12 +357,18 @@ class ThirdFragment : Fragment() {
 //progress bar stops
                 progressBar.visibility = View.GONE
 //                Printing the Tagged Response on Screen
-                viewOfLayout3rd.findViewById<TextView>(R.id.textView2).text = output
+                viewOfLayout3rd.findViewById<TextView>(R.id.textView3rd).text = output
 
 //                Copy-to-Clipboard button for ease
-                viewOfLayout3rd.button4.setOnClickListener {
+                viewOfLayout3rd.copyButton3rd.setOnClickListener {
                     copy_to_clipboard(output.toString())
                 }
+
+                //share button
+                viewOfLayout3rd.shareButton3rd.setOnClickListener {
+                    shareText(output.toString())
+                }
+
             }, {
                 Log.i(
                     "Result Extraction failed from Text-Topic Modelling JobId",
@@ -382,6 +385,18 @@ class ThirdFragment : Fragment() {
             }
         }
         queue2.add(req)
+    }
+
+    //share button implementation
+    private fun shareText(topicsToShare: String) {
+        val intent = Intent(Intent.ACTION_SEND)
+        intent.type = "text/plain"
+        intent.putExtra(
+            Intent.EXTRA_TEXT,
+            "Tags are:\n$topicsToShare"
+        )
+        val chooser = Intent.createChooser(intent, "Share Via")
+        startActivity(chooser)
     }
 
     //    Function to copy tagged response to clipboard
