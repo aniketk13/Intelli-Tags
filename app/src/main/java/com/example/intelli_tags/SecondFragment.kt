@@ -31,6 +31,8 @@ import com.amplifyframework.core.Amplify
 import com.amplifyframework.storage.s3.AWSS3StoragePlugin
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
+import kotlinx.android.synthetic.main.fragment_first.view.*
+import kotlinx.android.synthetic.main.fragment_second.view.searchTags
 import org.json.JSONObject
 import java.lang.Exception
 import java.lang.StringBuilder
@@ -54,106 +56,26 @@ class SecondFragment : Fragment() {
         ai = viewOfLayout2nd.context.packageManager
             .getApplicationInfo(viewOfLayout2nd.context.packageName, PackageManager.GET_META_DATA)
         progressBar = viewOfLayout2nd.findViewById(R.id.progressBar2nd)
-        progressBar.visibility = View.GONE
 
         viewOfLayout2nd.getFiles.setOnClickListener {
             Log.i("hello", "hello")
             launchGallery()
         }
-
-        if (imageUri == null) {
-            viewOfLayout2nd.searchTags.setOnClickListener {
-                Toast.makeText(viewOfLayout2nd.context, "Please select a file", Toast.LENGTH_SHORT)
+        //        If search button is clicked
+        viewOfLayout2nd.searchTags.setOnClickListener {
+            if (imageUri == null)
+                Toast.makeText(viewOfLayout2nd.context, "Please put a valid input", Toast.LENGTH_SHORT)
                     .show()
-            }
-            viewOfLayout2nd.copyButton2nd.setOnClickListener {
-                Toast.makeText(viewOfLayout2nd.context, "Please select a file", Toast.LENGTH_SHORT)
-                    .show()
-            }
-            viewOfLayout2nd.shareButton2nd.setOnClickListener {
-                Toast.makeText(viewOfLayout2nd.context, "Please select a file", Toast.LENGTH_SHORT)
-                    .show()
-            }
-        } else {
-            viewOfLayout2nd.searchTags.setOnClickListener {
+            else {
+                viewOfLayout2nd.searchTags.isEnabled=false
+                viewOfLayout2nd.copyButton2nd.isEnabled=false
+                viewOfLayout2nd.shareButton2nd.isEnabled=false
                 progressBar.visibility = View.VISIBLE
-                viewOfLayout2nd.getFiles.isEnabled = false
-                viewOfLayout2nd.searchTags.isEnabled = false
-                viewOfLayout2nd.copyButton2nd.isEnabled = false
-                viewOfLayout2nd.shareButton2nd.isEnabled = false
+
                 getJobId()
-            }
-            if (viewOfLayout2nd.textView2nd.text == "") {
-                viewOfLayout2nd.copyButton2nd.setOnClickListener {
-                    Toast.makeText(
-                        viewOfLayout2nd.context,
-                        "Please search for tags first",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-                viewOfLayout2nd.shareButton2nd.setOnClickListener {
-                    Toast.makeText(
-                        viewOfLayout2nd.context,
-                        "Please search for tags first",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            } else {
-                viewOfLayout2nd.copyButton2nd.setOnClickListener {
-                    copy_to_clipboard(output.toString())
-                }
-                viewOfLayout2nd.shareButton2nd.setOnClickListener {
-                    shareText(output.toString())
-                }
+//                processText(text)
             }
         }
-
-
-        if (viewOfLayout2nd.textViewImageName.text == null) {
-            viewOfLayout2nd.searchTags.setOnClickListener {
-                Toast.makeText(viewOfLayout2nd.context, "Please select a file", Toast.LENGTH_SHORT)
-                    .show()
-            }
-            viewOfLayout2nd.copyButton2nd.setOnClickListener {
-                Toast.makeText(viewOfLayout2nd.context, "Please select a file", Toast.LENGTH_SHORT)
-                    .show()
-            }
-            viewOfLayout2nd.shareButton2nd.setOnClickListener {
-                Toast.makeText(viewOfLayout2nd.context, "Please select a file", Toast.LENGTH_SHORT)
-                    .show()
-            }
-        }
-
-        if (viewOfLayout2nd.textViewImageName.text != null && viewOfLayout2nd.textView2nd.text == null) {
-            viewOfLayout2nd.searchTags.setOnClickListener {
-                progressBar.visibility = View.VISIBLE
-                viewOfLayout2nd.getFiles.isEnabled = false
-                viewOfLayout2nd.searchTags.isEnabled = false
-                viewOfLayout2nd.copyButton2nd.isEnabled = false
-                viewOfLayout2nd.shareButton2nd.isEnabled = false
-                getJobId()
-            }
-            viewOfLayout2nd.copyButton2nd.setOnClickListener {
-                Toast.makeText(
-                    viewOfLayout2nd.context,
-                    "Please search for tags first",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-            viewOfLayout2nd.shareButton2nd.setOnClickListener {
-                Toast.makeText(
-                    viewOfLayout2nd.context,
-                    "Please search for tags first",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-        }
-
-
-//        viewOfLayout2nd.searchTags.isEnabled=false
-//        viewOfLayout2nd.copyButton2nd.isEnabled=false
-//        viewOfLayout2nd.shareButton2nd.isEnabled=false
-
 
         return viewOfLayout2nd
     }
@@ -178,10 +100,6 @@ class SecondFragment : Fragment() {
     //getting the image URI
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         progressBar.visibility = View.VISIBLE
-        viewOfLayout2nd.getFiles.isEnabled = false
-        viewOfLayout2nd.searchTags.isEnabled = false
-        viewOfLayout2nd.copyButton2nd.isEnabled = false
-        viewOfLayout2nd.shareButton2nd.isEnabled = false
 
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == RESULT_OK && requestCode == 100) {
@@ -209,6 +127,7 @@ class SecondFragment : Fragment() {
             Log.i("path", filepath1.toString())
 
             viewOfLayout2nd.textViewImageName.text = fileName
+            uploadFile()
             uploadPhotoToS3(imageUri)
         }
     }
@@ -220,11 +139,6 @@ class SecondFragment : Fragment() {
             Amplify.Storage.uploadInputStream("Image.png", stream, {
                 Log.i("MyAmplifyApp", "Successfully uploaded: ${it.key}")
                 progressBar.visibility = View.GONE
-                viewOfLayout2nd.searchTags.isEnabled = true
-                viewOfLayout2nd.getFiles.isEnabled = true
-                viewOfLayout2nd.copyButton2nd.isEnabled = true
-                viewOfLayout2nd.shareButton2nd.isEnabled = true
-//                getJobId()
             }, {
                 Log.e("MyAmplifyApp", "Upload failed", it)
             })
@@ -456,10 +370,10 @@ class SecondFragment : Fragment() {
                 //progress bar stops
                 progressBar.visibility = View.GONE
                 viewOfLayout2nd.findViewById<TextView>(R.id.textView2nd).text = output
-                viewOfLayout2nd.getFiles.isEnabled = true
-                viewOfLayout2nd.searchTags.isEnabled = true
-                viewOfLayout2nd.copyButton2nd.isEnabled = true
-                viewOfLayout2nd.shareButton2nd.isEnabled = true
+//                viewOfLayout2nd.getFiles.isEnabled = true
+//                viewOfLayout2nd.searchTags.isEnabled = true
+//                viewOfLayout2nd.copyButton2nd.isEnabled = true
+//                viewOfLayout2nd.shareButton2nd.isEnabled = true
 //                viewOfLayout2nd.copyButton2nd.setOnClickListener {
 //                    copy_to_clipboard(output.toString())
 //                }

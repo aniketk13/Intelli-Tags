@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="7dp"
-    android:clickable="true"
     android:paddingTop="10dp"
     tools:context=".SecondFragment">
 
@@ -33,6 +32,7 @@
         android:layout_marginTop="16dp"
         android:height="50dp"
         android:background="@drawable/allroundcorners"
+        android:gravity="center"
         android:textAlignment="center"
         android:textColor="#F8F2F2"
         app:layout_constraintBottom_toTopOf="@+id/textView2nd"
@@ -47,6 +47,7 @@
         style="?android:attr/progressBarStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.462"
@@ -107,13 +108,17 @@
         app:tint="@color/white"
         tools:ignore="SpeakableTextPresentCheck" />
 
-    <ImageButton
+    <Button
         android:id="@+id/getFiles"
-        android:layout_width="63dp"
+        android:layout_width="wrap_content"
         android:layout_height="63dp"
         android:layout_marginTop="8dp"
-        android:background="@drawable/roundimagebuttons"
-        android:src="@android:drawable/ic_menu_gallery"
+        android:backgroundTint="#060c34"
+        android:text="Select Image"
+        android:textColor="#FFFFFF"
+        app:cornerRadius="22dp"
+        app:icon="@drawable/gallery"
+        app:iconTint="#FFFFFF"
         app:layout_constraintBottom_toTopOf="@+id/textView2nd"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.45"
