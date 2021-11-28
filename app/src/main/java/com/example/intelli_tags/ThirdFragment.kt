@@ -373,6 +373,7 @@ class ThirdFragment : Fragment() {
             ) as ClipboardManager
         val clip = ClipData.newPlainText("label", topics)
         clipboard!!.setPrimaryClip(clip)
+        Toast.makeText(viewOfLayout3rd.context, "Copied to Clipboard", Toast.LENGTH_SHORT).show()
     }
 
 }
