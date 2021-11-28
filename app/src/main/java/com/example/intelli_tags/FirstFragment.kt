@@ -52,9 +52,9 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
                     .show()
             else {
                 progressBar.visibility = View.VISIBLE
-                viewOfLayout.searchTags.isEnabled=false
-                viewOfLayout.copyButton.isEnabled=false
-                viewOfLayout.shareButton.isEnabled=false
+                viewOfLayout.searchTags.isEnabled = false
+                viewOfLayout.copyButton.isEnabled = false
+                viewOfLayout.shareButton.isEnabled = false
                 processText(text)
             }
         }
@@ -146,8 +146,21 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
 //                Checking job status every 0.5 sec
                 Handler().postDelayed({
                     if (outputText == "COMPLETED") {
+                        if (it.getString("failed").equals("1"))
+                        {
+                            Toast.makeText(
+                                viewOfLayout.context,
+                                "Enter a valid text",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            progressBar.visibility=View.GONE
+                            viewOfLayout.searchTags.isEnabled = true
+                            viewOfLayout.copyButton.isEnabled = true
+                            viewOfLayout.shareButton.isEnabled = true
+                        }
+                        else
 //                        sending job id to extract the topics
-                        getTopics(response)
+                            getTopics(response)
                     } else
                         getStatus()
                 }, 500)
@@ -184,9 +197,9 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
 
                 //progress bar stops
                 progressBar.visibility = View.GONE
-                viewOfLayout.searchTags.isEnabled=true
-                viewOfLayout.copyButton.isEnabled=true
-                viewOfLayout.shareButton.isEnabled=true
+                viewOfLayout.searchTags.isEnabled = true
+                viewOfLayout.copyButton.isEnabled = true
+                viewOfLayout.shareButton.isEnabled = true
                 Log.i("topics", output.toString())
                 viewOfLayout.findViewById<TextView>(R.id.resultTopics).text = output
 

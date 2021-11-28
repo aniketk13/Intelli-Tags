@@ -234,7 +234,6 @@ class SecondFragment : Fragment() {
 //                Handler().postDelayed({ getTextOut(response) }, 8000)
                 getStatus()
                 Log.i("identifier", response)
-                Toast.makeText(requireContext(), "Api Call success", Toast.LENGTH_SHORT).show()
 
             }, {
                 Toast.makeText(requireContext(), "Api Call Failed", Toast.LENGTH_SHORT).show()
@@ -244,8 +243,6 @@ class SecondFragment : Fragment() {
                 val headerMap = mutableMapOf<String, String>()
                 headerMap["Authorization"] = "ApiKey ${ai.metaData["ModzyAPIKey"]}"
                 headerMap["Content-Type"] = "application/json"
-//                headerMap["Accept"] = "application/json"
-//                headerMap["User-Agent"] = "PostmanRuntime/7.28.4"
                 return headerMap
             }
         }
@@ -277,8 +274,6 @@ class SecondFragment : Fragment() {
                 val headerMap = mutableMapOf<String, String>()
                 headerMap["Authorization"] = "ApiKey ${ai.metaData["ModzyAPIKey"]}"
                 headerMap["Content-Type"] = "application/json"
-//                headerMap["Accept"] = "application/json"
-//                headerMap["User-Agent"] = "PostmanRuntime/7.28.4"
                 return headerMap
             }
         }
@@ -308,8 +303,6 @@ class SecondFragment : Fragment() {
                 val headerMap = mutableMapOf<String, String>()
                 headerMap["Authorization"] = "ApiKey ${ai.metaData["ModzyAPIKey"]}"
                 headerMap["Content-Type"] = "application/json"
-//                headerMap["Accept"] = "application/json"
-//                headerMap["User-Agent"] = "PostmanRuntime/7.28.4"
                 return headerMap
             }
         }
@@ -343,7 +336,6 @@ class SecondFragment : Fragment() {
             Method.POST, url, body,
             {
                 response = it.getString("jobIdentifier")
-//                Handler().postDelayed({ getSt(response) }, 3000)
                 getStatus2(response)
                 Log.i("identifier", response)
 
@@ -355,8 +347,6 @@ class SecondFragment : Fragment() {
                 val headerMap = mutableMapOf<String, String>()
                 headerMap["Authorization"] = "ApiKey ${ai.metaData["ModzyAPIKey"]}"
                 headerMap["Content-Type"] = "application/json"
-//                headerMap["Accept"] = "application/json"
-//                headerMap["User-Agent"] = "PostmanRuntime/7.28.4"
                 return headerMap
             }
         }
@@ -372,7 +362,7 @@ class SecondFragment : Fragment() {
             {
                 outputText = it.getString("status")
 
-//                Checking job status every 2 sec
+//                Checking job status every 0.5 sec
                 Handler().postDelayed({
                     if (outputText == "COMPLETED")
 //                        sending job id to extract the caption
@@ -388,8 +378,6 @@ class SecondFragment : Fragment() {
                 val headerMap = mutableMapOf<String, String>()
                 headerMap["Authorization"] = "ApiKey ${ai.metaData["ModzyAPIKey"]}"
                 headerMap["Content-Type"] = "application/json"
-//                headerMap["Accept"] = "application/json"
-//                headerMap["User-Agent"] = "PostmanRuntime/7.28.4"
                 return headerMap
             }
         }
@@ -428,8 +416,6 @@ class SecondFragment : Fragment() {
                 val headerMap = mutableMapOf<String, String>()
                 headerMap["Authorization"] = "ApiKey ${ai.metaData["ModzyAPIKey"]}"
                 headerMap["Content-Type"] = "application/json"
-//                headerMap["Accept"] = "application/json"
-//                headerMap["User-Agent"] = "PostmanRuntime/7.28.4"
                 return headerMap
             }
         }
