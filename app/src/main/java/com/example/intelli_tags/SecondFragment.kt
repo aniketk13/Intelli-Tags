@@ -31,7 +31,9 @@ import com.amplifyframework.core.Amplify
 import com.amplifyframework.storage.s3.AWSS3StoragePlugin
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
+import kotlinx.android.synthetic.main.fragment_first.*
 import kotlinx.android.synthetic.main.fragment_first.view.*
+import kotlinx.android.synthetic.main.fragment_second.*
 import kotlinx.android.synthetic.main.fragment_second.view.searchTags
 import org.json.JSONObject
 import java.lang.Exception
@@ -61,22 +63,61 @@ class SecondFragment : Fragment() {
             Log.i("hello", "hello")
             launchGallery()
         }
-        //        If search button is clicked
+
+
+        //If search button is clicked
         viewOfLayout2nd.searchTags.setOnClickListener {
             if (imageUri == null)
-                Toast.makeText(viewOfLayout2nd.context, "Please put a valid input", Toast.LENGTH_SHORT)
+                Toast.makeText(
+                    viewOfLayout2nd.context,
+                    "Please put a valid input",
+                    Toast.LENGTH_SHORT
+                )
                     .show()
             else {
-                viewOfLayout2nd.searchTags.isEnabled=false
-                viewOfLayout2nd.copyButton2nd.isEnabled=false
-                viewOfLayout2nd.shareButton2nd.isEnabled=false
+                viewOfLayout2nd.searchTags.isEnabled = false
+                viewOfLayout2nd.copyButton2nd.isEnabled = false
+                viewOfLayout2nd.shareButton2nd.isEnabled = false
                 progressBar.visibility = View.VISIBLE
 
                 getJobId()
-//                processText(text)
+                //processText(text)
             }
         }
 
+        //        If copy to clipboard button is clicked
+        viewOfLayout2nd.copyButton.setOnClickListener {
+            val text = viewOfLayout2nd.textViewImageName.text.toString()
+            if (text == "")
+                Toast.makeText(
+                    viewOfLayout2nd.context,
+                    "Please put a valid input",
+                    Toast.LENGTH_SHORT
+                )
+                    .show()
+            else if (textView2nd.text == "")
+                Toast.makeText(viewOfLayout2nd.context, "Generate the tags!", Toast.LENGTH_SHORT)
+                    .show()
+            else
+                copy_to_clipboard(output.toString())
+        }
+
+//        If share button is clicked
+        viewOfLayout2nd.shareButton.setOnClickListener {
+            val text = viewOfLayout2nd.textViewImageName.text.toString()
+            if (text == "")
+                Toast.makeText(
+                    viewOfLayout2nd.context,
+                    "Please put a valid input",
+                    Toast.LENGTH_SHORT
+                )
+                    .show()
+            else if (textView2nd.text == "")
+                Toast.makeText(viewOfLayout2nd.context, "Generate the tags!", Toast.LENGTH_SHORT)
+                    .show()
+            else
+                shareText(output.toString())
+        }
         return viewOfLayout2nd
     }
 
@@ -370,17 +411,19 @@ class SecondFragment : Fragment() {
                 //progress bar stops
                 progressBar.visibility = View.GONE
                 viewOfLayout2nd.findViewById<TextView>(R.id.textView2nd).text = output
-//                viewOfLayout2nd.getFiles.isEnabled = true
-//                viewOfLayout2nd.searchTags.isEnabled = true
-//                viewOfLayout2nd.copyButton2nd.isEnabled = true
-//                viewOfLayout2nd.shareButton2nd.isEnabled = true
-//                viewOfLayout2nd.copyButton2nd.setOnClickListener {
-//                    copy_to_clipboard(output.toString())
-//                }
-//
-//                viewOfLayout2nd.shareButton2nd.setOnClickListener {
-//                    shareText(output.toString())
-//                }
+
+                //enabling all the buttons
+                viewOfLayout2nd.getFiles.isEnabled = true
+                viewOfLayout2nd.searchTags.isEnabled = true
+                viewOfLayout2nd.copyButton2nd.isEnabled = true
+                viewOfLayout2nd.shareButton2nd.isEnabled = true
+                viewOfLayout2nd.copyButton2nd.setOnClickListener {
+                    copy_to_clipboard(output.toString())
+                }
+
+                viewOfLayout2nd.shareButton2nd.setOnClickListener {
+                    shareText(output.toString())
+                }
                 Toast.makeText(requireContext(), "Api Call success", Toast.LENGTH_SHORT).show()
 
             }, {
