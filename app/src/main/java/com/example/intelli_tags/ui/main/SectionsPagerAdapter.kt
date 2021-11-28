@@ -38,10 +38,10 @@ class SectionsPagerAdapter(private val context: Context, fm: FragmentManager) :
 
     override fun getPageTitle(position: Int): CharSequence? {
         return when (position) {
-            0 -> "First Tab"
-            1 -> "Second Tab"
+            0 -> "Text"
+            1 -> "Image"
             else -> {
-                return "Third Tab"
+                return "Video"
             }
         }
         return context.resources.getString(TAB_TITLES[position])

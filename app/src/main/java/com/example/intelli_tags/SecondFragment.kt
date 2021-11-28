@@ -20,6 +20,7 @@ import android.net.Uri
 import android.os.Handler
 import android.provider.MediaStore
 import android.provider.OpenableColumns
+import android.view.WindowManager
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
@@ -42,6 +43,8 @@ class SecondFragment : Fragment() {
     lateinit var ai: ApplicationInfo
     lateinit var exampleFile: File
     private var imageUri: Uri? = null
+    lateinit var fileName:String
+    private lateinit var output:StringBuilder
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -57,6 +60,55 @@ class SecondFragment : Fragment() {
             Log.i("hello", "hello")
             launchGallery()
         }
+
+        if(imageUri==null)
+        {
+            viewOfLayout2nd.searchTags.setOnClickListener {
+                Toast.makeText(viewOfLayout2nd.context,"Please select a file",Toast.LENGTH_SHORT).show()
+            }
+            viewOfLayout2nd.copyButton2nd.setOnClickListener {
+                Toast.makeText(viewOfLayout2nd.context,"Please select a file",Toast.LENGTH_SHORT).show()
+            }
+            viewOfLayout2nd.shareButton2nd.setOnClickListener {
+                Toast.makeText(viewOfLayout2nd.context,"Please select a file",Toast.LENGTH_SHORT).show()
+            }
+        }
+        else
+        {
+            viewOfLayout2nd.searchTags.setOnClickListener {
+                progressBar.visibility=View.VISIBLE
+                viewOfLayout2nd.getFiles.isEnabled=false
+                viewOfLayout2nd.searchTags.isEnabled=false
+                viewOfLayout2nd.copyButton2nd.isEnabled=false
+                viewOfLayout2nd.shareButton2nd.isEnabled=false
+                getJobId()
+            }
+            if(viewOfLayout2nd.textView2nd.text=="")
+            {
+                viewOfLayout2nd.copyButton2nd.setOnClickListener {
+                    Toast.makeText(viewOfLayout2nd.context,"Please search for tags first",Toast.LENGTH_SHORT).show()
+                }
+                viewOfLayout2nd.shareButton2nd.setOnClickListener {
+                    Toast.makeText(viewOfLayout2nd.context,"Please search for tags first",Toast.LENGTH_SHORT).show()
+                }
+            }
+            else
+            {
+                viewOfLayout2nd.copyButton2nd.setOnClickListener {
+                    copy_to_clipboard(output.toString())
+                }
+                viewOfLayout2nd.shareButton2nd.setOnClickListener {
+                    shareText(output.toString())
+                }
+            }
+        }
+
+//        viewOfLayout2nd.searchTags.isEnabled=false
+//        viewOfLayout2nd.copyButton2nd.isEnabled=false
+//        viewOfLayout2nd.shareButton2nd.isEnabled=false
+
+
+
         return viewOfLayout2nd
     }
 
@@ -80,6 +132,11 @@ class SecondFragment : Fragment() {
     //getting the image URI
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         progressBar.visibility = View.VISIBLE
+        viewOfLayout2nd.getFiles.isEnabled=false
+        viewOfLayout2nd.searchTags.isEnabled=false
+        viewOfLayout2nd.copyButton2nd.isEnabled=false
+        viewOfLayout2nd.shareButton2nd.isEnabled=false
+
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == RESULT_OK && requestCode == 100) {
             imageUri = data?.data
@@ -88,7 +145,7 @@ class SecondFragment : Fragment() {
             try {
                 val nameIndex: Int = returnCursor!!.getColumnIndex(OpenableColumns.DISPLAY_NAME)
                 returnCursor.moveToFirst()
-                val fileName = returnCursor.getString(nameIndex)
+                fileName = returnCursor.getString(nameIndex)
                 Log.i("hello", "file name : $fileName")
             } catch (e: Exception) {
                 Log.i(ContentValues.TAG, "error: ", e)
@@ -105,7 +162,7 @@ class SecondFragment : Fragment() {
             filepath1 = uriPathHelper.getPath(viewOfLayout2nd.context, imageUri).toString()
             Log.i("path", filepath1.toString())
 
-            viewOfLayout2nd.textViewImageName.text = filepath1
+            viewOfLayout2nd.textViewImageName.text = fileName
             uploadPhotoToS3(imageUri)
         }
     }
@@ -116,7 +173,12 @@ class SecondFragment : Fragment() {
         if (stream != null) {
             Amplify.Storage.uploadInputStream("Image.png", stream, {
                 Log.i("MyAmplifyApp", "Successfully uploaded: ${it.key}")
-                getJobId()
+                progressBar.visibility=View.GONE
+                viewOfLayout2nd.searchTags.isEnabled=true
+                viewOfLayout2nd.getFiles.isEnabled=true
+                viewOfLayout2nd.copyButton2nd.isEnabled=true
+                viewOfLayout2nd.shareButton2nd.isEnabled=true
+//                getJobId()
             }, {
                 Log.e("MyAmplifyApp", "Upload failed", it)
             })
@@ -341,20 +403,24 @@ class SecondFragment : Fragment() {
                 val topics = (it.getJSONObject("results")).getJSONObject("my-input")
                     .getJSONArray("results.json")
                 Log.i("topics", topics.toString())
-                var output = StringBuilder()
+                output = StringBuilder()
                 for (i in 0 until topics.length())
                     output.append("#").append(topics[i]).append("\n")
                 Log.i("topics", output.toString())
                 //progress bar stops
                 progressBar.visibility = View.GONE
                 viewOfLayout2nd.findViewById<TextView>(R.id.textView2nd).text = output
-                viewOfLayout2nd.copyButton2nd.setOnClickListener {
-                    copy_to_clipboard(output.toString())
-                }
-
-                viewOfLayout2nd.shareButton2nd.setOnClickListener {
-                    shareText(output.toString())
-                }
+                viewOfLayout2nd.getFiles.isEnabled=true
+                viewOfLayout2nd.searchTags.isEnabled=true
+                viewOfLayout2nd.copyButton2nd.isEnabled=true
+                viewOfLayout2nd.shareButton2nd.isEnabled=true
+//                viewOfLayout2nd.copyButton2nd.setOnClickListener {
+//                    copy_to_clipboard(output.toString())
+//                }
+//
+//                viewOfLayout2nd.shareButton2nd.setOnClickListener {
+//                    shareText(output.toString())
+//                }
                 Toast.makeText(requireContext(), "Api Call success", Toast.LENGTH_SHORT).show()
 
             }, {
@@ -395,5 +461,6 @@ class SecondFragment : Fragment() {
             ) as ClipboardManager
         val clip = ClipData.newPlainText("label", textToCopy)
         clipboard!!.setPrimaryClip(clip)
+        Toast.makeText(viewOfLayout2nd.context,"Copied to Clipboard",Toast.LENGTH_SHORT).show()
     }
 }
