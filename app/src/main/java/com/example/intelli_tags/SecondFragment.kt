@@ -48,9 +48,9 @@ class SecondFragment : Fragment() {
     lateinit var exampleFile: File
     private var imageUri: Uri? = null
     lateinit var fileName: String
-    private var output=StringBuilder()
+    private var output = StringBuilder()
     lateinit var response: String
-    lateinit var outputText:String
+    lateinit var outputText: String
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -144,8 +144,8 @@ class SecondFragment : Fragment() {
 
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == RESULT_OK && requestCode == 100) {
-            viewOfLayout2nd.textView2nd.text=""
-            output.delete(0,output.length)
+            viewOfLayout2nd.textView2nd.text = ""
+            output.delete(0, output.length)
             imageUri = data?.data
             val returnCursor: Cursor? =
                 imageUri?.let { requireContext().contentResolver.query(it, null, null, null, null) }
@@ -365,8 +365,19 @@ class SecondFragment : Fragment() {
 //                Checking job status every 0.5 sec
                 Handler().postDelayed({
                     if (outputText == "COMPLETED")
+                        if (it.getString("failed").equals("1")) {
+                            Toast.makeText(
+                                viewOfLayout2nd.context,
+                                "Insert a valid image",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            progressBar.visibility = View.GONE
+                            viewOfLayout2nd.searchTags.isEnabled = true
+                            viewOfLayout2nd.copyButton2nd.isEnabled = true
+                            viewOfLayout2nd.shareButton2nd.isEnabled = true
+                        } else
 //                        sending job id to extract the caption
-                        getTopics(response)
+                            getTopics(response)
                     else
                         getStatus2(response)
                 }, 500)
