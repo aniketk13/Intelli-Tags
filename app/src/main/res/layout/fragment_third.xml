@@ -33,6 +33,7 @@
         android:layout_marginTop="16dp"
         android:height="50dp"
         android:background="@drawable/allroundcorners"
+        android:fontFamily="@font/inter"
         android:gravity="center"
         android:textAlignment="center"
         android:textColor="#F8F2F2"
@@ -43,29 +44,13 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Video URL" />
 
-    <EditText
-        android:id="@+id/editTextVideoName3rd"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:height="50dp"
-        android:background="@drawable/allroundcorners"
-        android:gravity="center"
-        android:textAlignment="center"
-        android:textColor="#F8F2F2"
-        app:layout_constraintBottom_toTopOf="@+id/textView3rd"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.81"
-        tools:text="Video Name" />
 
     <ProgressBar
         android:id="@+id/progressBar3rd"
         style="?android:attr/progressBarStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.462"

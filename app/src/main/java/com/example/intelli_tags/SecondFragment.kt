@@ -48,7 +48,9 @@ class SecondFragment : Fragment() {
     lateinit var exampleFile: File
     private var imageUri: Uri? = null
     lateinit var fileName: String
-    private lateinit var output: StringBuilder
+    private var output=StringBuilder()
+    lateinit var response: String
+    lateinit var outputText:String
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -80,15 +82,14 @@ class SecondFragment : Fragment() {
                 viewOfLayout2nd.shareButton2nd.isEnabled = false
                 progressBar.visibility = View.VISIBLE
 
+//                Disabled buttons and called function to generate the job-id
                 getJobId()
-                //processText(text)
             }
         }
 
         //        If copy to clipboard button is clicked
-        viewOfLayout2nd.copyButton.setOnClickListener {
-            val text = viewOfLayout2nd.textViewImageName.text.toString()
-            if (text == "")
+        viewOfLayout2nd.copyButton2nd.setOnClickListener {
+            if (imageUri == null)
                 Toast.makeText(
                     viewOfLayout2nd.context,
                     "Please put a valid input",
@@ -103,9 +104,8 @@ class SecondFragment : Fragment() {
         }
 
 //        If share button is clicked
-        viewOfLayout2nd.shareButton.setOnClickListener {
-            val text = viewOfLayout2nd.textViewImageName.text.toString()
-            if (text == "")
+        viewOfLayout2nd.shareButton2nd.setOnClickListener {
+            if (imageUri == null)
                 Toast.makeText(
                     viewOfLayout2nd.context,
                     "Please put a valid input",
@@ -132,7 +132,7 @@ class SecondFragment : Fragment() {
         )
     }
 
-    //launcing the gallery of user
+    //launching the gallery of user
     private fun launchGallery() {
         val gallery = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
         startActivityForResult(gallery, 100)
@@ -144,6 +144,8 @@ class SecondFragment : Fragment() {
 
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == RESULT_OK && requestCode == 100) {
+            viewOfLayout2nd.textView2nd.text=""
+            output.delete(0,output.length)
             imageUri = data?.data
             val returnCursor: Cursor? =
                 imageUri?.let { requireContext().contentResolver.query(it, null, null, null, null) }
@@ -165,7 +167,7 @@ class SecondFragment : Fragment() {
             //getting the file path
             val uriPathHelper = URIPathHelper()
             filepath1 = uriPathHelper.getPath(viewOfLayout2nd.context, imageUri).toString()
-            Log.i("path", filepath1.toString())
+            Log.i("path", filepath1)
 
             viewOfLayout2nd.textViewImageName.text = fileName
             uploadFile()
@@ -225,13 +227,12 @@ class SecondFragment : Fragment() {
         Log.i("Final Body", finalBody.toString())
 
         val queue = Volley.newRequestQueue(viewOfLayout2nd.context)
-        var response = ""
         val req = object : JsonObjectRequest(
             Method.POST, url, finalBody,
             {
                 response = it.getString("jobIdentifier")
 //                Handler().postDelayed({ getTextOut(response) }, 8000)
-                getStatus(response)
+                getStatus()
                 Log.i("identifier", response)
                 Toast.makeText(requireContext(), "Api Call success", Toast.LENGTH_SHORT).show()
 
@@ -243,8 +244,8 @@ class SecondFragment : Fragment() {
                 val headerMap = mutableMapOf<String, String>()
                 headerMap["Authorization"] = "ApiKey ${ai.metaData["ModzyAPIKey"]}"
                 headerMap["Content-Type"] = "application/json"
-                headerMap["Accept"] = "application/json"
-                headerMap["User-Agent"] = "PostmanRuntime/7.28.4"
+//                headerMap["Accept"] = "application/json"
+//                headerMap["User-Agent"] = "PostmanRuntime/7.28.4"
                 return headerMap
             }
         }
@@ -252,7 +253,7 @@ class SecondFragment : Fragment() {
     }
 
     //    Function to check if job is completed
-    private fun getStatus(response: String) {
+    private fun getStatus() {
         var outputText = ""
         val queue2 = Volley.newRequestQueue(viewOfLayout2nd.context)
         val req = object : JsonObjectRequest(
@@ -264,9 +265,9 @@ class SecondFragment : Fragment() {
                 Handler().postDelayed({
                     if (outputText == "COMPLETED")
 //                        sending job id to extract the caption
-                        getTextOut(response)
+                        getTextOut()
                     else
-                        getStatus(response)
+                        getStatus()
                 }, 2000)
 
             }, {
@@ -276,8 +277,8 @@ class SecondFragment : Fragment() {
                 val headerMap = mutableMapOf<String, String>()
                 headerMap["Authorization"] = "ApiKey ${ai.metaData["ModzyAPIKey"]}"
                 headerMap["Content-Type"] = "application/json"
-                headerMap["Accept"] = "application/json"
-                headerMap["User-Agent"] = "PostmanRuntime/7.28.4"
+//                headerMap["Accept"] = "application/json"
+//                headerMap["User-Agent"] = "PostmanRuntime/7.28.4"
                 return headerMap
             }
         }
@@ -285,20 +286,21 @@ class SecondFragment : Fragment() {
     }
 
     //getting the text of the image
-    private fun getTextOut(response: String) {
+    private fun getTextOut() {
         Log.i("status", response)
         val queue2 = Volley.newRequestQueue(viewOfLayout2nd.context)
         val req = object : JsonObjectRequest(
             Method.GET, "https://app.modzy.com/api/results/$response", null,
             {
-                val outputText = (it.getJSONObject("results")).getJSONObject("0001")
+                outputText = (it.getJSONObject("results")).getJSONObject("0001")
                     .getJSONObject("results.json").getString("text")
-                processText(outputText)
-                Log.i("Text", outputText.toString())
-                Toast.makeText(requireContext(), "Api Call success", Toast.LENGTH_SHORT).show()
+
+//                sending the text to process and generate tags
+                processText()
+                Log.i("Text", outputText)
 
             }, {
-                Toast.makeText(requireContext(), "Api Call Failed second", Toast.LENGTH_SHORT)
+                Toast.makeText(requireContext(), "Operation Failed", Toast.LENGTH_SHORT)
                     .show()
                 Log.i("status code", it.message.toString())
             }) {
@@ -306,8 +308,8 @@ class SecondFragment : Fragment() {
                 val headerMap = mutableMapOf<String, String>()
                 headerMap["Authorization"] = "ApiKey ${ai.metaData["ModzyAPIKey"]}"
                 headerMap["Content-Type"] = "application/json"
-                headerMap["Accept"] = "application/json"
-                headerMap["User-Agent"] = "PostmanRuntime/7.28.4"
+//                headerMap["Accept"] = "application/json"
+//                headerMap["User-Agent"] = "PostmanRuntime/7.28.4"
                 return headerMap
             }
         }
@@ -315,7 +317,7 @@ class SecondFragment : Fragment() {
     }
 
     //processing the text to get the topics
-    private fun processText(text: String) {
+    private fun processText() {
 
         val url = "https://app.modzy.com/api/jobs"
         val body = JSONObject()
@@ -324,7 +326,7 @@ class SecondFragment : Fragment() {
         body2.put("version", "0.0.1")
         body.put("model", body2)
         val body4 = JSONObject()
-        body4.put("input.txt", text)
+        body4.put("input.txt", outputText)
         val body3 = JSONObject()
         body3.put("my-input", body4)
         val body5 = JSONObject()
@@ -344,18 +346,17 @@ class SecondFragment : Fragment() {
 //                Handler().postDelayed({ getSt(response) }, 3000)
                 getStatus2(response)
                 Log.i("identifier", response)
-                Toast.makeText(requireContext(), "Api Call success", Toast.LENGTH_SHORT).show()
 
             }, {
-                Toast.makeText(requireContext(), "Api Call Failed", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Operation Failed", Toast.LENGTH_SHORT).show()
                 Log.i("status code", it.message.toString())
             }) {
             override fun getHeaders(): MutableMap<String, String> {
                 val headerMap = mutableMapOf<String, String>()
                 headerMap["Authorization"] = "ApiKey ${ai.metaData["ModzyAPIKey"]}"
                 headerMap["Content-Type"] = "application/json"
-                headerMap["Accept"] = "application/json"
-                headerMap["User-Agent"] = "PostmanRuntime/7.28.4"
+//                headerMap["Accept"] = "application/json"
+//                headerMap["User-Agent"] = "PostmanRuntime/7.28.4"
                 return headerMap
             }
         }
@@ -387,8 +388,8 @@ class SecondFragment : Fragment() {
                 val headerMap = mutableMapOf<String, String>()
                 headerMap["Authorization"] = "ApiKey ${ai.metaData["ModzyAPIKey"]}"
                 headerMap["Content-Type"] = "application/json"
-                headerMap["Accept"] = "application/json"
-                headerMap["User-Agent"] = "PostmanRuntime/7.28.4"
+//                headerMap["Accept"] = "application/json"
+//                headerMap["User-Agent"] = "PostmanRuntime/7.28.4"
                 return headerMap
             }
         }
@@ -404,9 +405,9 @@ class SecondFragment : Fragment() {
                 val topics = (it.getJSONObject("results")).getJSONObject("my-input")
                     .getJSONArray("results.json")
                 Log.i("topics", topics.toString())
-                output = StringBuilder()
+//                output = StringBuilder()
                 for (i in 0 until topics.length())
-                    output.append("#").append(topics[i]).append("\n")
+                    output.append("#").append(topics[i]).append(" ")
                 Log.i("topics", output.toString())
                 //progress bar stops
                 progressBar.visibility = View.GONE
@@ -417,17 +418,9 @@ class SecondFragment : Fragment() {
                 viewOfLayout2nd.searchTags.isEnabled = true
                 viewOfLayout2nd.copyButton2nd.isEnabled = true
                 viewOfLayout2nd.shareButton2nd.isEnabled = true
-                viewOfLayout2nd.copyButton2nd.setOnClickListener {
-                    copy_to_clipboard(output.toString())
-                }
-
-                viewOfLayout2nd.shareButton2nd.setOnClickListener {
-                    shareText(output.toString())
-                }
-                Toast.makeText(requireContext(), "Api Call success", Toast.LENGTH_SHORT).show()
 
             }, {
-                Toast.makeText(requireContext(), "Api Call Failed second", Toast.LENGTH_SHORT)
+                Toast.makeText(requireContext(), "Operation Failed", Toast.LENGTH_SHORT)
                     .show()
                 Log.i("status code", it.message.toString())
             }) {
@@ -435,8 +428,8 @@ class SecondFragment : Fragment() {
                 val headerMap = mutableMapOf<String, String>()
                 headerMap["Authorization"] = "ApiKey ${ai.metaData["ModzyAPIKey"]}"
                 headerMap["Content-Type"] = "application/json"
-                headerMap["Accept"] = "application/json"
-                headerMap["User-Agent"] = "PostmanRuntime/7.28.4"
+//                headerMap["Accept"] = "application/json"
+//                headerMap["User-Agent"] = "PostmanRuntime/7.28.4"
                 return headerMap
             }
         }

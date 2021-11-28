@@ -31,9 +31,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:ellipsize="end"
-            android:maxLines="9"
-            android:fontFamily="serif"
+            android:fontFamily="@font/inter"
             android:hint="Input"
+            android:maxLines="9"
 
             tools:ignore="SpeakableTextPresentCheck" />
     </com.google.android.material.textfield.TextInputLayout>
