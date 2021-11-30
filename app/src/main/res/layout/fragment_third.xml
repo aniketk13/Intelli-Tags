@@ -4,9 +4,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="7dp"
     android:paddingTop="10dp"
     tools:context=".ThirdFragment">
+
+    <View
+        android:id="@+id/myRectangleView"
+        android:layout_width="418dp"
+        android:layout_height="107dp"
+        android:background="@drawable/rectangle"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.523"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
 
     <TextView
         android:id="@+id/textView3rd"
@@ -62,27 +73,9 @@
         app:layout_constraintVertical_bias="0.592" />
 
     <ImageButton
-        android:id="@+id/searchTags3rd"
-        android:layout_width="63dp"
-        android:layout_height="63dp"
-        android:layout_marginTop="35dp"
-        android:layout_marginEnd="2dp"
-        android:layout_marginBottom="32dp"
-        android:background="@drawable/roundimagebuttons"
-        android:src="?android:attr/actionModeWebSearchDrawable"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.815"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView3rd"
-        app:layout_constraintVertical_bias="0.4"
-        app:tint="@color/white"
-        tools:ignore="SpeakableTextPresentCheck" />
-
-    <ImageButton
         android:id="@+id/copyButton3rd"
-        android:layout_width="63dp"
-        android:layout_height="63dp"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
         android:layout_marginTop="35dp"
         android:layout_marginEnd="5dp"
         android:layout_marginBottom="32dp"
@@ -90,16 +83,16 @@
         android:src="?attr/actionModeCopyDrawable"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/searchTags3rd"
-        app:layout_constraintHorizontal_bias="0.842"
+        app:layout_constraintHorizontal_bias="0.916"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView3rd"
-        app:layout_constraintVertical_bias="0.384"
+        app:layout_constraintVertical_bias="0.478"
         tools:ignore="SpeakableTextPresentCheck" />
 
     <ImageButton
         android:id="@+id/shareButton3rd"
-        android:layout_width="63dp"
-        android:layout_height="63dp"
+        android:layout_height="80dp"
+        android:layout_width="80dp"
         android:layout_marginStart="52dp"
         android:layout_marginTop="35dp"
         android:layout_marginBottom="32dp"
@@ -107,10 +100,28 @@
         android:src="?attr/actionModeShareDrawable"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/copyButton3rd"
-        app:layout_constraintHorizontal_bias="0.377"
+        app:layout_constraintHorizontal_bias="0.458"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView3rd"
-        app:layout_constraintVertical_bias="0.369"
+        app:layout_constraintVertical_bias="0.446"
+        app:tint="@color/white"
+        tools:ignore="SpeakableTextPresentCheck" />
+
+    <ImageButton
+        android:id="@+id/searchTags3rd"
+        android:layout_height="80dp"
+        android:layout_width="80dp"
+        android:layout_marginTop="35dp"
+        android:layout_marginEnd="2dp"
+        android:layout_marginBottom="32dp"
+        android:background="@drawable/roundimagebuttons"
+        android:src="?android:attr/actionModeWebSearchDrawable"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.805"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView3rd"
+        app:layout_constraintVertical_bias="0.482"
         app:tint="@color/white"
         tools:ignore="SpeakableTextPresentCheck" />
 
