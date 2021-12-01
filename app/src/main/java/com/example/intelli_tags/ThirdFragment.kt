@@ -1,7 +1,9 @@
 package com.example.intelli_tags
 
+import android.app.AlertDialog
 import android.content.ClipData
 import android.content.ClipboardManager
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
@@ -21,6 +23,7 @@ import androidx.core.content.ContextCompat
 import com.android.volley.Request
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.android.synthetic.main.fragment_first.view.*
 import kotlinx.android.synthetic.main.fragment_second.*
 import kotlinx.android.synthetic.main.fragment_second.view.*
@@ -57,16 +60,24 @@ class ThirdFragment : Fragment() {
 
         //                Generating the auth token
         sendAppIdSymbl()
+
+
+        //testing the info button
+        viewOfLayout3rd.infoButton3.setOnClickListener {
+            openDialog()
+        }
+
+
         viewOfLayout3rd.searchTags3rd.setOnClickListener {
             urlOfVideo = viewOfLayout3rd.editTextVideoUrl.text.toString()
-            if (urlOfVideo=="")
+            if (urlOfVideo == "") {
                 Toast.makeText(
                     viewOfLayout3rd.context,
                     "Please enter a valid url",
                     Toast.LENGTH_SHORT
-                )
-                    .show()
-            else {
+                ).show()
+//                editTextVideoUrl.setError("Enter a public url\nHead to ")
+            } else {
                 viewOfLayout3rd.searchTags3rd.isEnabled = false
                 viewOfLayout3rd.copyButton3rd.isEnabled = false
                 viewOfLayout3rd.shareButton3rd.isEnabled = false
@@ -114,6 +125,17 @@ class ThirdFragment : Fragment() {
         return viewOfLayout3rd
     }
 
+    private fun openDialog() {
+        MaterialAlertDialogBuilder(viewOfLayout3rd.context)
+            .setTitle("Public URL")
+            .setMessage("To be implemented")
+            .setPositiveButton("Got it", object: DialogInterface.OnClickListener{
+                override fun onClick(p0: DialogInterface?, p1: Int) {
+
+                }
+            }).show()
+    }
+
     //sending app id to symbl request
     private fun sendAppIdSymbl() {
         val parameters = JSONObject()
@@ -121,14 +143,15 @@ class ThirdFragment : Fragment() {
         parameters.put("appId", "${ai.metaData["SymblAppId"]}")
         parameters.put(
             "appSecret",
-            "${ai.metaData["SymblAppSecret"]}")
+            "${ai.metaData["SymblAppSecret"]}"
+        )
 
 
         val queue = Volley.newRequestQueue(viewOfLayout3rd.context)
         val req = JsonObjectRequest(Request.Method.POST, tokenGenerateUrl, parameters,
             {
                 accessToken = it.getString("accessToken")
-                Log.i("accessToken",accessToken)
+                Log.i("accessToken", accessToken)
 //                getConvIDSymbl()
 
             }, {
@@ -228,14 +251,14 @@ class ThirdFragment : Fragment() {
             for (i in 0 until messages.length()) {
                 val obj = messages.getJSONObject(i)
                 val text = obj.getString("text")
-                videoTextSymbl=videoTextSymbl+text+" "
+                videoTextSymbl = videoTextSymbl + text + " "
             }
         }
         Log.i("Final Body Symbl", videoTextSymbl)
         processTextModzy(videoTextSymbl)
     }
 
-//    Function to process the text and generate a job-id
+    //    Function to process the text and generate a job-id
     fun processTextModzy(text: String) {
 
         val url = "https://app.modzy.com/api/jobs"
