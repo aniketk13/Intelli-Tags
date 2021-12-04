@@ -128,12 +128,9 @@ class ThirdFragment : Fragment() {
     private fun openDialog() {
         MaterialAlertDialogBuilder(viewOfLayout3rd.context)
             .setTitle("Public URL")
-            .setMessage("Put direct media URL only.")
-            .setPositiveButton("Got it", object: DialogInterface.OnClickListener{
-                override fun onClick(p0: DialogInterface?, p1: Int) {
-
-                }
-            }).show()
+            .setMessage("Put direct media URL only.\nFor more information go to: https://www.wonderplugin.com/online-tools/google-drive-direct-link-generator/")
+            .setPositiveButton("Got it"
+            ) { _, _ -> }.show()
     }
 
     //sending app id to symbl request
