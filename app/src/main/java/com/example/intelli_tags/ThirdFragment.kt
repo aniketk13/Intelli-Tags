@@ -128,11 +128,15 @@ class ThirdFragment : Fragment() {
 
     private fun openDialog() {
         MaterialAlertDialogBuilder(viewOfLayout3rd.context)
-            .setTitle("Public URL").setMessage("Enter public URL only\n\nFor more information, go to:\n" )
-            .setMessage(Html.fromHtml("<a href=\"https://www.wonderplugin.com/online-tools/google-drive-direct-link-generator/\">Check this link out</a>"))
+            .setPositiveButton(
+                "Got it"
+            ) { _, _ -> }
+            .setTitle("Public URL")
+            .setMessage("Enter public URL only\n\nFor more information, go to:\n")
+            .setMessage(Html.fromHtml("<a href=\"https://www.wonderplugin.com/online-tools/google-drive-direct-link-generator/\">https://www.wonderplugin.com/online-tools/google-drive-direct-link-generator/</a>"))
+            .create()
 //            .setMessage("Put direct media URL only.\nFor more information go to:\n" Html.from)
-            .setPositiveButton("Got it"
-            ) { _, _ -> }.show()
+            .show()
     }
 
     //sending app id to symbl request
