@@ -128,7 +128,7 @@ class ThirdFragment : Fragment() {
     private fun openDialog() {
         MaterialAlertDialogBuilder(viewOfLayout3rd.context)
             .setTitle("Public URL")
-            .setMessage("To be implemented")
+            .setMessage("Put direct media URL only.")
             .setPositiveButton("Got it", object: DialogInterface.OnClickListener{
                 override fun onClick(p0: DialogInterface?, p1: Int) {
 

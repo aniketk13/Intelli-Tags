@@ -116,12 +116,13 @@
         android:id="@+id/infoButton3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="70dp"
+        android:background="@drawable/roundimagebuttons"
         android:src="@android:drawable/ic_menu_info_details"
+        app:layout_constraintBottom_toBottomOf="@+id/editTextVideoUrl"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/editTextVideoUrl"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/editTextVideoUrl"
         app:tint="@color/black" />
 
 
