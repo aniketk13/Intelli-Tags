@@ -11,6 +11,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.text.Html
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -127,8 +128,9 @@ class ThirdFragment : Fragment() {
 
     private fun openDialog() {
         MaterialAlertDialogBuilder(viewOfLayout3rd.context)
-            .setTitle("Public URL")
-            .setMessage("Put direct media URL only.\nFor more information go to: https://www.wonderplugin.com/online-tools/google-drive-direct-link-generator/")
+            .setTitle("Public URL").setMessage("Enter public URL only\n\nFor more information, go to:\n" )
+            .setMessage(Html.fromHtml("<a href=\"https://www.wonderplugin.com/online-tools/google-drive-direct-link-generator/\">Check this link out</a>"))
+//            .setMessage("Put direct media URL only.\nFor more information go to:\n" Html.from)
             .setPositiveButton("Got it"
             ) { _, _ -> }.show()
     }
