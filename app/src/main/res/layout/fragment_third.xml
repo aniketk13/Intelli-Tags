@@ -32,6 +32,8 @@
         android:fontFamily="@font/inter"
         android:gravity="center"
         android:hint="Your Tags!"
+        android:shadowColor="#40ffffff"
+        android:shadowRadius="20"
         android:textAlignment="center"
         android:textColor="#FFFFFF"
         android:textSize="18sp"
@@ -54,6 +56,8 @@
         android:hint="Enter Video URL..."
         android:maxLines="1"
         android:paddingStart="8dp"
+        android:shadowColor="#40ffffff"
+        android:shadowRadius="20"
         android:textAlignment="center"
         android:textColor="#F8F2F2"
         app:layout_constraintEnd_toEndOf="parent"
@@ -122,7 +126,7 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/editTextVideoUrl"
         app:layout_constraintTop_toTopOf="@+id/editTextVideoUrl"
-        app:tint="@color/black" />
+        app:tint="@color/white" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

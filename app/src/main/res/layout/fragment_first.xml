@@ -111,8 +111,8 @@
         style="?android:attr/progressBarStyle"
         android:layout_width="105dp"
         android:layout_height="105dp"
-        android:layout_marginEnd="18dp"
-        android:layout_marginBottom="37dp"
+        android:layout_marginEnd="25dp"
+        android:layout_marginBottom="38dp"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
