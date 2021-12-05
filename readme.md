@@ -18,18 +18,18 @@ Our Goal Through **IntelliTags** is to make your work more Visible and Approacha
 - Modzy, Kotlin, Figma, XML, AWS, Symbl.ai
 
 ## 🚩Challenges we ran into:
-- One of the first things was the new technology i.e. Modzy, with so many new models it was a difficult learning curve.
+- One of the first things was the new technology i.e. Modzy, with so many new models it was a complex learning curve.
 - One Place we find ourselves stuck was while storing our images on a remote server and pipeline that information through the Modzy models to fetch data quickly.
 - A Good UI is always a little challenging, but having something which is visually aesthetic while helping the user understand what to do, can go a long way into make the app more user-friendly.
 
 ## 🎉Accomplishments that we're proud of:
 1) We were able to benefit from multiple Modzy Models, and integrate them into an all-in-one solution for the Most Frequently used form of data, i.e. Text, Images and Videos.
-2) Even as Beginners, creating a Project with Modzy help us Explore the AWS domain as well, which helped in Deploying the S3 Containers for cloud storage of our images and videos.
+2) Even as Beginners, creating a Project with Modzy helped us Explore the AWS domain as well, which helped in Deploying the S3 Containers for cloud storage of our images and videos.
 
 ## ✨What we learned
 1. Modzy - MLOps & ModelOps
 2. AWS
 
 ##❓ What's next for IntelliTags
-1. Our First aim is to create a band new modzy model to enable full video transcription, that can allow the user to upload their locally saved videos on the platform and get relevant tags for that.
+1. Our First aim is to create a brand new modzy model to enable full video transcription, that can allow the user to upload their locally saved videos on the platform and get relevant tags for that.
 2. Next, we aim to expand the usability on even more types of images, which can intelligently analyse what’s in the picture without the need for text to generate tags!
