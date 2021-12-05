@@ -133,7 +133,6 @@ class ThirdFragment : Fragment() {
             ) { _, _ -> }
             .setTitle("Public URL")
             .setMessage("Enter public URL only! \n")
-//            .setMessage("Put direct media URL only.\nFor more information go to:\n" Html.from)
             .show()
     }
 
