@@ -132,9 +132,7 @@ class ThirdFragment : Fragment() {
                 "Got it"
             ) { _, _ -> }
             .setTitle("Public URL")
-            .setMessage("Enter public URL only\n\nFor more information, go to:\n")
-            .setMessage(Html.fromHtml("<a href=\"https://www.wonderplugin.com/online-tools/google-drive-direct-link-generator/\">https://www.wonderplugin.com/online-tools/google-drive-direct-link-generator/</a>"))
-            .create()
+            .setMessage("Enter public URL only! \n")
 //            .setMessage("Put direct media URL only.\nFor more information go to:\n" Html.from)
             .show()
     }
