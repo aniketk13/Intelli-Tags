@@ -62,6 +62,7 @@
     <ProgressBar
         android:id="@+id/progressBar2nd"
         style="?android:attr/progressBarStyle"
+        android:visibility="gone"
         android:layout_width="105dp"
         android:layout_height="105dp"
         android:layout_marginEnd="18dp"
