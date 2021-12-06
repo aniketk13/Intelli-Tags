@@ -46,7 +46,7 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
 
 //        If search button is clicked
         viewOfLayout.searchTags.setOnClickListener {
-            val text = viewOfLayout.TextInputEditText.text.toString()
+            val text = viewOfLayout.TextInput.text.toString()
             if (text == "")
                 Toast.makeText(viewOfLayout.context, "Please put a valid input", Toast.LENGTH_SHORT)
                     .show()
@@ -61,7 +61,7 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
 
 //        If copy to clipboard button is clicked
         viewOfLayout.copyButton.setOnClickListener {
-            val text = viewOfLayout.TextInputEditText.text.toString()
+            val text = viewOfLayout.TextInput.text.toString()
             if (text == "")
                 Toast.makeText(viewOfLayout.context, "Please put a valid input", Toast.LENGTH_SHORT)
                     .show()
@@ -74,7 +74,7 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
 
 //        If share button is clicked
         viewOfLayout.shareButton.setOnClickListener {
-            val text = viewOfLayout.TextInputEditText.text.toString()
+            val text = viewOfLayout.TextInput.text.toString()
             if (text == "")
                 Toast.makeText(viewOfLayout.context, "Please put a valid input", Toast.LENGTH_SHORT)
                     .show()

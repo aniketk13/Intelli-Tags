@@ -6,9 +6,11 @@
         android:topRightRadius="30dp"
         android:bottomLeftRadius="30dp"
         android:bottomRightRadius="30dp" />
+    <padding android:left="3dp"
+        android:right="2dp"/>
     <!-- This is the border color -->
 <!--    <stroke android:width="2dp" android:color="#060C34" />-->
     <!--- This is the background color -->
-    <solid android:color="#A8A7A7" />
-<stroke android:color="#E8175D" android:width="1dp"/>
+<!--    <solid android:color="#828787" />-->
+<stroke android:color="#7dffd8" android:width="2dp"/>
 </shape>
