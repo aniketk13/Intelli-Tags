@@ -30,6 +30,6 @@ Our Goal Through **IntelliTags** is to make your work more Visible and Approacha
 1. Modzy - MLOps & ModelOps
 2. AWS
 
-##❓ What's next for IntelliTags
+## ❓ What's next for IntelliTags
 1. Our First aim is to create a brand new modzy model to enable full video transcription, that can allow the user to upload their locally saved videos on the platform and get relevant tags for that.
 2. Next, we aim to expand the usability on even more types of images, which can intelligently analyse what’s in the picture without the need for text to generate tags!
