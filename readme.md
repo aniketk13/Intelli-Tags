@@ -14,7 +14,7 @@ Our Goal Through **IntelliTags** is to make your work more Visible and Approacha
 
 ![image](https://user-images.githubusercontent.com/67915580/144237351-d67ab913-9072-457a-a911-2349b0fc659f.png)
 
-##  🛠Tools used in the development:
+##  🛠How we built it:
 - Modzy, Kotlin, Figma, XML, AWS, Symbl.ai
 
 ## 🚩Challenges we ran into:
