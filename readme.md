@@ -6,6 +6,7 @@ Our Goal Through **IntelliTags** is to make your work more Visible and Approacha
 
 ## 💡Inspiration:
 - It's Hard to Always find the best possible Hashtags for our Content, whether it is relevant or not, too specific or too vague, and sometimes one's just too lazy to research on it.
+- Hashtags also helps to increase the engagement on the posts, which is benefical for the creators. Hastags also helps in categorizing the posts. 
 - We came up with the idea of IntelliTags as an all-in-one solution for the top 3 kind of media i.e Text, Images and Videos.
 
 ## 🎮What it does:
